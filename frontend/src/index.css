@@ -1,0 +1,107 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gray-50 text-gray-900 font-sans;
+  }
+  .dark body {
+    @apply bg-gray-950 text-gray-100;
+  }
+}
+
+@layer components {
+  .story-card {
+    @apply bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200;
+  }
+  .dark .story-card {
+    @apply bg-gray-800 border-gray-700;
+  }
+  .tag {
+    @apply inline-flex items-center px-2 py-0.5 rounded text-xs font-medium;
+  }
+  .reading-content {
+    @apply text-gray-800 dark:text-gray-200 leading-[1.95];
+    font-family: 'Be Vietnam Pro', Georgia, serif;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #f1f5f9; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+.dark ::-webkit-scrollbar-track { background: #1e293b; }
+.dark ::-webkit-scrollbar-thumb { background: #475569; }
+
+/* Reading progress bar */
+.reading-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(to right, #3b82f6, #8b5cf6);
+  z-index: 9999;
+  transition: width 0.1s linear;
+}
+
+/* Hero background transition */
+.hero-bg-fade {
+  transition: opacity 0.5s ease;
+}
+
+/* Story card fan/open effect on hover */
+.story-fan {
+  position: relative;
+  cursor: pointer;
+}
+
+.story-fan .fan-page {
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  will-change: transform;
+}
+
+.story-fan .fan-page-left {
+  background: #d1d5db;
+  z-index: 0;
+  transform: rotate(-2deg) translateY(3px);
+}
+
+.story-fan .fan-page-right {
+  background: #e5e7eb;
+  z-index: 1;
+  transform: rotate(2deg) translateY(3px);
+}
+
+.story-fan .fan-main {
+  position: relative;
+  z-index: 2;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  will-change: transform;
+  border-radius: 12px;
+  overflow: hidden;
+  display: block;
+  width: 100%;
+}
+
+.story-fan:hover .fan-page-left {
+  transform: rotate(-10deg) translateY(8px) translateX(-5px);
+}
+
+.story-fan:hover .fan-page-right {
+  transform: rotate(10deg) translateY(8px) translateX(5px);
+}
+
+.story-fan:hover .fan-main {
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: 0 20px 40px -8px rgba(0,0,0,0.25);
+}
