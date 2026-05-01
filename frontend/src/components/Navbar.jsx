@@ -215,13 +215,13 @@ export default function Navbar() {
       {/* Bottom nav bar - blue */}
       <div className="bg-blue-600 hidden md:block">
         <div className="max-w-7xl mx-auto px-4">
-          <nav className="flex items-center justify-center">
+          <nav className="flex items-center gap-1 py-1.5">
             {navLinks.map(l => (
               <Link key={l.to} to={l.to}
-                className={`px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors ${
+                className={`px-4 py-1.5 text-sm whitespace-nowrap rounded-lg transition-colors ${
                   location.pathname === l.to
-                    ? 'bg-white text-blue-700 font-semibold'
-                    : 'text-white/90 hover:text-white hover:bg-blue-700'
+                    ? 'bg-white text-blue-700 font-bold shadow-sm'
+                    : 'text-white font-medium hover:bg-blue-700'
                 }`}>
                 {l.label}
               </Link>

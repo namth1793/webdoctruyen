@@ -2,12 +2,23 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 
-require('./db/schema');
+const db = require('./db/schema');
+
+// Auto-seed on first run (Railway ephemeral filesystem)
+const storyCount = db.prepare('SELECT COUNT(*) as c FROM stories').get().c;
+if (storyCount === 0) {
+  console.log('🌱 Database trống — đang seed dữ liệu mẫu...');
+  require('./db/seed');
+  console.log('✅ Seed xong!');
+}
 
 const app = express();
 const PORT = process.env.PORT || 5020;
 
-app.use(cors());
+app.use(cors({
+  origin: process.env.ALLOWED_ORIGIN ? process.env.ALLOWED_ORIGIN.split(',') : '*',
+  credentials: true,
+}));
 app.use(express.json());
 
 app.use('/api/stories', require('./routes/stories'));
