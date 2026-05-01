@@ -10,9 +10,9 @@ const THEMES = [
 ];
 
 export default function ChapterRead() {
-  const { storySlug, chapterNum } = useParams();
+  const { storySlug, chapterSlug } = useParams();
   const navigate = useNavigate();
-  const chNum = parseInt(chapterNum);
+  const chNum = parseInt(chapterSlug?.replace('chuong-', '') || '');
 
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);

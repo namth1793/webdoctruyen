@@ -27,7 +27,7 @@ export default function App() {
         <BrowserRouter>
           <Routes>
             {/* Reading page (no main layout) */}
-            <Route path="/doc/:storySlug/chuong-:chapterNum" element={<ChapterRead />} />
+            <Route path="/doc/:storySlug/:chapterSlug" element={<ChapterRead />} />
 
             {/* Admin routes */}
             <Route path="/admin/login" element={<AdminLogin />} />
