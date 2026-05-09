@@ -34,7 +34,7 @@ export default function AdminLayout() {
       {/* Sidebar */}
       <aside className="w-56 bg-gray-900 flex flex-col shrink-0">
         <div className="px-5 py-5 border-b border-gray-700">
-          <div className="text-white font-bold text-sm">Kênh Truyện 123</div>
+          <div className="text-white font-bold text-sm">Truyện Huba</div>
           <div className="text-gray-400 text-xs mt-0.5">Admin Panel</div>
         </div>
         <nav className="flex-1 py-4 space-y-0.5 px-2">

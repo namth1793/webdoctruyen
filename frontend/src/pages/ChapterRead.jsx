@@ -23,14 +23,13 @@ export default function ChapterRead() {
   const [themeId, setThemeId] = useState(() => localStorage.getItem('rd_theme') || 'light');
   const [progress, setProgress] = useState(0);
   const [navVisible, setNavVisible] = useState(true);
+  const [adLink, setAdLink] = useState(null);
   const lastScrollY = useRef(0);
 
-  // Affiliate gate
-  const [affiliateLink, setAffiliateLink] = useState(null);
-  const [showGate, setShowGate] = useState(false);
-  const [gateClicked, setGateClicked] = useState(false);
-
   const theme = THEMES.find(t => t.id === themeId) || THEMES[0];
+
+  // Chương 2, rồi mỗi +4: 6, 10, 14, ...
+  const showAd = !isNaN(chNum) && chNum >= 2 && (chNum - 2) % 4 === 0;
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -45,21 +44,10 @@ export default function ChapterRead() {
     axios.get(`/api/chapters/${storySlug}?limit=200`).then(r => setAllChapters(r.data.chapters));
   }, [storySlug]);
 
-  // Fetch affiliate link & check if gate should show
   useEffect(() => {
-    axios.get('/api/affiliate/active').then(r => {
-      if (!r.data) return;
-      const link = r.data;
-      setAffiliateLink(link);
-      const triggerAfter = link.trigger_after || 3;
-      if (chNum > 0 && chNum % triggerAfter === 0) {
-        const key = `aff_gate_${storySlug}_${chNum}`;
-        if (!sessionStorage.getItem(key)) {
-          setShowGate(true);
-        }
-      }
-    }).catch(() => {});
-  }, [storySlug, chNum]);
+    if (!showAd) return;
+    axios.get('/api/affiliate/active').then(r => { if (r.data) setAdLink(r.data); }).catch(() => {});
+  }, [showAd]);
 
   useEffect(() => {
     const onScroll = () => {
@@ -95,22 +83,6 @@ export default function ChapterRead() {
     localStorage.setItem('rd_theme', id);
   };
 
-  const handleAffiliateClick = () => {
-    if (!affiliateLink) return;
-    axios.post(`/api/affiliate/click/${affiliateLink.id}`).catch(() => {});
-    window.open(affiliateLink.url, '_blank', 'noopener,noreferrer');
-    const key = `aff_gate_${storySlug}_${chNum}`;
-    sessionStorage.setItem(key, '1');
-    setGateClicked(true);
-    setTimeout(() => setShowGate(false), 800);
-  };
-
-  const handleGateDismiss = () => {
-    const key = `aff_gate_${storySlug}_${chNum}`;
-    sessionStorage.setItem(key, '1');
-    setShowGate(false);
-  };
-
   if (loading) return (
     <div className={`min-h-screen flex items-center justify-center ${theme.bg}`}>
       <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
@@ -124,28 +96,7 @@ export default function ChapterRead() {
       {/* Reading progress bar */}
       <div className="reading-progress" style={{ width: `${progress}%` }} />
 
-      {/* Affiliate gate overlay */}
-      {showGate && affiliateLink && (
-        <div className="fixed inset-0 z-[100] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl w-full max-w-sm p-6 text-center shadow-2xl">
-            <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-              </svg>
-            </div>
-            <h3 className="text-lg font-bold text-gray-900 mb-2">Mở khoá để đọc tiếp</h3>
-            <p className="text-sm text-gray-500 mb-1">Để tiếp tục đọc truyện miễn phí, bạn cần hỗ trợ chúng tôi bằng cách:</p>
-            <p className="text-sm font-medium text-blue-700 mb-5">{affiliateLink.description || affiliateLink.name}</p>
-            <button onClick={handleAffiliateClick}
-              className={`w-full py-3 font-bold text-white rounded-xl transition-all text-sm mb-3 ${gateClicked ? 'bg-green-500 scale-95' : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 active:scale-95'}`}>
-              {gateClicked ? '✓ Đã mở — Đang tải...' : `🎁 ${affiliateLink.name}`}
-            </button>
-            <button onClick={handleGateDismiss} className="text-xs text-gray-400 hover:text-gray-600 underline">
-              Bỏ qua (chỉ xem được một phần)
-            </button>
-          </div>
-        </div>
-      )}
+
 
       {/* Top nav */}
       <div className={`fixed top-0 left-0 right-0 z-40 transition-transform duration-300 ${navVisible ? 'translate-y-0' : '-translate-y-full'}`}>
@@ -228,6 +179,19 @@ export default function ChapterRead() {
             <p key={i} className="mb-5">{para}</p>
           ))}
         </div>
+
+        {/* Ad banner — chương 2, 6, 10, 14, ... */}
+        {showAd && adLink && (
+          <div className="my-8 rounded-xl border-2 border-dashed border-blue-300 bg-blue-50 dark:bg-blue-900/20 dark:border-blue-700 p-4 text-center">
+            <p className="text-xs text-blue-500 font-semibold uppercase tracking-wide mb-2">Quảng cáo</p>
+            <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">{adLink.description || adLink.name}</p>
+            <a href={adLink.url} target="_blank" rel="noopener noreferrer"
+              onClick={() => axios.post(`/api/affiliate/click/${adLink.id}`).catch(() => {})}
+              className="inline-block px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition-colors">
+              {adLink.name}
+            </a>
+          </div>
+        )}
 
         {/* Chapter navigation */}
         <div className="flex items-center justify-between gap-4 mt-12 pt-8 border-t border-current/10">

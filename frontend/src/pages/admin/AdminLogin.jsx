@@ -39,7 +39,7 @@ export default function AdminLogin() {
             </svg>
           </div>
           <h1 className="text-xl font-bold text-gray-900">Admin Panel</h1>
-          <p className="text-sm text-gray-500">Kênh Truyện 123</p>
+          <p className="text-sm text-gray-500">Truyện Huba</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">

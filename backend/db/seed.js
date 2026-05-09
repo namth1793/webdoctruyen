@@ -566,18 +566,35 @@ db.prepare(`INSERT INTO admin_users (username, email, password) VALUES (?, ?, ?)
 
 // Tags
 const tagData = [
+  // Kết thúc
   { name: 'HE', slug: 'he' },
   { name: 'BE', slug: 'be' },
+  { name: 'SE', slug: 'se' },
+  { name: 'Open End', slug: 'open-end' },
+  // Thể loại phụ
   { name: 'Sủng văn', slug: 'sung-van' },
+  { name: 'Ngọt', slug: 'ngot' },
   { name: 'Học đường', slug: 'hoc-duong' },
+  { name: 'Thanh xuân vườn trường', slug: 'thanh-xuan-vuon-truong' },
+  { name: 'Showbiz', slug: 'showbiz' },
+  { name: 'Tổng tài', slug: 'tong-tai' },
+  { name: 'Hợp đồng', slug: 'hop-dong' },
+  { name: 'CEO', slug: 'ceo' },
+  // Bối cảnh
   { name: 'Cổ trang', slug: 'co-trang' },
   { name: 'Hiện đại', slug: 'hien-dai' },
+  { name: 'Tương lai', slug: 'tuong-lai' },
+  { name: 'Mạt thế', slug: 'mat-the' },
+  { name: 'Dị giới', slug: 'di-gioi' },
+  // Cơ chế
   { name: 'Tu tiên', slug: 'tu-tien' },
   { name: 'Xuyên không', slug: 'xuyen-khong' },
-  { name: 'Vô hạn lưu', slug: 'vo-han-luu' },
   { name: 'Trọng sinh', slug: 'trong-sinh' },
-  { name: 'Tổng tài', slug: 'tong-tai' },
-  { name: 'Ngọt', slug: 'ngot' },
+  { name: 'Vô hạn lưu', slug: 'vo-han-luu' },
+  { name: 'Hệ thống', slug: 'he-thong' },
+  { name: 'Phản diện', slug: 'phan-dien' },
+  { name: 'Điệp viên', slug: 'diep-vien' },
+  { name: 'Kinh dị', slug: 'kinh-di' },
 ];
 const insertTag = db.prepare('INSERT INTO tags (name, slug) VALUES (?, ?)');
 for (const t of tagData) insertTag.run(t.name, t.slug);

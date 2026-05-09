@@ -183,16 +183,15 @@ export default function StoryDetail() {
                 </p>
               )}
 
-              {/* Rating display */}
-              {ratingStats && (
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="flex items-center gap-1">
-                    {[1,2,3,4,5].map(i => (
-                      <span key={i} className={`text-base ${i <= Math.round(ratingStats.avg || 0) ? 'text-yellow-400' : 'text-gray-300'}`}>★</span>
-                    ))}
-                  </div>
+              {/* Rating — interactive inline */}
+              {ratingStats !== null && (
+                <div className="flex items-center gap-3 mb-3 flex-wrap">
+                  <StarRating myScore={ratingStats.myScore} onRate={ratingLoading ? null : handleRate} />
                   <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">{avgScore}</span>
                   <span className="text-xs text-gray-400">({ratingStats.count} đánh giá)</span>
+                  {!user && (
+                    <span className="text-xs text-gray-400">· <Link to="/dang-nhap" className="text-blue-600 hover:underline">Đăng nhập</Link> để đánh giá</span>
+                  )}
                 </div>
               )}
 
@@ -210,6 +209,18 @@ export default function StoryDetail() {
                   </Link>
                 ))}
               </div>
+
+              {/* Hashtags */}
+              {(story.tags || []).length > 0 && (
+                <div className="flex flex-wrap gap-1.5 mb-4">
+                  {story.tags.map(t => (
+                    <Link key={t.slug} to={`/tim-kiem?tag=${t.slug}`}
+                      className="px-2.5 py-1 text-xs font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-900/50 rounded-full transition-colors border border-blue-200 dark:border-blue-800">
+                      #{t.name}
+                    </Link>
+                  ))}
+                </div>
+              )}
 
               {/* Stats */}
               <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mb-5">
@@ -243,7 +254,7 @@ export default function StoryDetail() {
                 <button onClick={handleBookmark} disabled={bookmarking}
                   className={`flex items-center gap-2 px-5 py-2.5 text-sm font-medium rounded-lg transition-colors ${bookmarked ? 'bg-red-50 text-red-600 hover:bg-red-100' : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200'}`}>
                   <svg className="w-4 h-4" fill={bookmarked ? 'currentColor' : 'none'} viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                   </svg>
                   {bookmarked ? 'Đã lưu' : 'Lưu truyện'}
                 </button>
@@ -265,50 +276,6 @@ export default function StoryDetail() {
           )}
         </div>
       </div>
-
-      {/* Rating section */}
-      {ratingStats !== null && (
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5 mb-6">
-          <h2 className="font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-            <span className="text-yellow-400 text-lg">★</span>
-            Đánh giá truyện
-          </h2>
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
-            <div className="text-center">
-              <div className="text-4xl font-bold text-gray-900 dark:text-white">{avgScore}</div>
-              <div className="flex items-center justify-center gap-0.5 mt-1">
-                {[1,2,3,4,5].map(i => (
-                  <span key={i} className={`text-xl ${i <= Math.round(ratingStats.avg || 0) ? 'text-yellow-400' : 'text-gray-300'}`}>★</span>
-                ))}
-              </div>
-              <div className="text-xs text-gray-400 mt-1">{ratingStats.count} đánh giá</div>
-            </div>
-            <div className="flex-1 w-full space-y-1.5">
-              {[5,4,3,2,1].map(s => {
-                const count = ratingStats[`s${s}`] || 0;
-                const pct = ratingStats.count > 0 ? (count / ratingStats.count) * 100 : 0;
-                return (
-                  <div key={s} className="flex items-center gap-2 text-xs">
-                    <span className="w-3 text-gray-500 shrink-0">{s}</span>
-                    <span className="text-yellow-400 text-sm">★</span>
-                    <div className="flex-1 h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
-                      <div className="h-full bg-yellow-400 rounded-full transition-all" style={{ width: `${pct}%` }} />
-                    </div>
-                    <span className="w-5 text-gray-400 shrink-0">{count}</span>
-                  </div>
-                );
-              })}
-            </div>
-            <div className="shrink-0">
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-2 font-medium">
-                {ratingStats.myScore ? `Bạn đã chấm: ${ratingStats.myScore}★` : 'Chấm điểm truyện:'}
-              </p>
-              <StarRating myScore={ratingStats.myScore} onRate={ratingLoading ? null : handleRate} />
-              {!user && <p className="text-xs text-gray-400 mt-1"><Link to="/dang-nhap" className="text-blue-600 hover:underline">Đăng nhập</Link> để đánh giá</p>}
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Chapter list */}
       <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden mb-6">
@@ -335,10 +302,10 @@ export default function StoryDetail() {
           </div>
         )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0">
-          {displayChapters.map((ch, i) => (
+        <div className="divide-y divide-gray-100 dark:divide-gray-700">
+          {displayChapters.map(ch => (
             <Link key={ch.id} to={`/doc/${slug}/chuong-${ch.chapter_number}`}
-              className={`flex items-center gap-3 px-4 py-3 hover:bg-blue-50 dark:hover:bg-gray-700/50 transition-colors group ${i % 2 === 1 ? 'sm:border-l border-gray-100 dark:border-gray-700' : ''} border-b border-gray-100 dark:border-gray-700`}>
+              className="flex items-center gap-3 px-4 py-3 hover:bg-blue-50 dark:hover:bg-gray-700/50 transition-colors group">
               <span className="text-sm text-gray-500 w-20 shrink-0 group-hover:text-blue-600">Chương {ch.chapter_number}</span>
               <span className="text-sm text-gray-800 dark:text-gray-200 truncate group-hover:text-blue-700 flex-1">{ch.title || `Chương ${ch.chapter_number}`}</span>
             </Link>

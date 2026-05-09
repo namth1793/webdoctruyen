@@ -10,6 +10,7 @@ import SearchPage from './pages/SearchPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import BookmarksPage from './pages/BookmarksPage';
+import ContactPage from './pages/ContactPage';
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminLayout from './pages/admin/AdminLayout';
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -53,6 +54,7 @@ export default function App() {
               <Route path="/dang-nhap" element={<LoginPage />} />
               <Route path="/dang-ky" element={<RegisterPage />} />
               <Route path="/tu-truyen" element={<BookmarksPage />} />
+              <Route path="/lien-he" element={<ContactPage />} />
             </Route>
           </Routes>
         </BrowserRouter>

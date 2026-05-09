@@ -5,27 +5,23 @@ const { optionalAuth } = require('../middleware/auth');
 
 // GET /api/stories - list with filter/sort/pagination
 router.get('/', (req, res) => {
-  const { category, status, genre, sort = 'updated', page = 1, limit = 20 } = req.query;
+  const { category, status, genre, tag, sort = 'updated', page = 1, limit = 20 } = req.query;
   const offset = (parseInt(page) - 1) * parseInt(limit);
 
+  let joins = 'LEFT JOIN categories c ON s.category_id = c.id';
   let where = [];
   let params = [];
 
-  if (category) {
-    where.push('c.slug = ?');
-    params.push(category);
-  }
-  if (status) {
-    where.push('s.status = ?');
-    params.push(status);
-  }
-  if (genre) {
-    where.push('s.genres LIKE ?');
-    params.push(`%${genre}%`);
+  if (category) { where.push('c.slug = ?'); params.push(category); }
+  if (status)   { where.push('s.status = ?'); params.push(status); }
+  if (genre)    { where.push('s.genres LIKE ?'); params.push(`%${genre}%`); }
+  if (tag) {
+    joins += ' INNER JOIN story_tags st ON s.id = st.story_id INNER JOIN tags tg ON st.tag_id = tg.id';
+    where.push('tg.slug = ?');
+    params.push(tag);
   }
 
   const whereStr = where.length ? `WHERE ${where.join(' AND ')}` : '';
-
   const sortMap = {
     updated: 's.updated_at DESC',
     views: 's.views DESC',
@@ -36,20 +32,17 @@ router.get('/', (req, res) => {
   const orderBy = sortMap[sort] || 's.updated_at DESC';
 
   const stories = db.prepare(`
-    SELECT s.*, c.name as category_name, c.slug as category_slug, c.color as category_color,
+    SELECT DISTINCT s.*, c.name as category_name, c.slug as category_slug, c.color as category_color,
     (SELECT MAX(chapter_number) FROM chapters WHERE story_id = s.id) as latest_chapter,
     (SELECT updated_at FROM chapters WHERE story_id = s.id ORDER BY chapter_number DESC LIMIT 1) as chapter_updated
-    FROM stories s
-    LEFT JOIN categories c ON s.category_id = c.id
+    FROM stories s ${joins}
     ${whereStr}
     ORDER BY ${orderBy}
     LIMIT ? OFFSET ?
   `).all([...params, parseInt(limit), offset]);
 
   const total = db.prepare(`
-    SELECT COUNT(*) as count FROM stories s
-    LEFT JOIN categories c ON s.category_id = c.id
-    ${whereStr}
+    SELECT COUNT(DISTINCT s.id) as count FROM stories s ${joins} ${whereStr}
   `).get(params).count;
 
   res.json({
@@ -121,7 +114,14 @@ router.get('/:slug', optionalAuth, (req, res) => {
     readingProgress = db.prepare('SELECT * FROM reading_history WHERE user_id = ? AND story_id = ?').get(req.user.id, story.id);
   }
 
-  res.json({ ...story, genres: JSON.parse(story.genres || '[]'), bookmarked, readingProgress });
+  const tags = db.prepare(`
+    SELECT t.name, t.slug FROM tags t
+    INNER JOIN story_tags st ON t.id = st.tag_id
+    WHERE st.story_id = ?
+    ORDER BY t.name ASC
+  `).all(story.id);
+
+  res.json({ ...story, genres: JSON.parse(story.genres || '[]'), tags, bookmarked, readingProgress });
 });
 
 // POST /api/stories/:slug/bookmark
