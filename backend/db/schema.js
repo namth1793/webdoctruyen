@@ -141,4 +141,8 @@ db.exec(`
   );
 `);
 
+// Migrations
+try { db.exec('ALTER TABLE affiliate_links ADD COLUMN time_trigger INTEGER DEFAULT 5'); } catch (_) {}
+try { db.exec("ALTER TABLE affiliate_links ADD COLUMN image_url TEXT DEFAULT ''"); } catch (_) {}
+
 module.exports = db;

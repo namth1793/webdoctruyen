@@ -2,9 +2,25 @@ const router = require('express').Router();
 const db = require('../db/schema');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const multer = require('multer');
+const cloudinary = require('cloudinary').v2;
 const adminAuth = require('../middleware/adminAuth');
 
 const SECRET = process.env.JWT_SECRET || 'truyen123_secret_key';
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 5 * 1024 * 1024 } });
+
+// ── Image upload (Cloudinary) ──
+router.post('/upload', adminAuth, upload.single('file'), (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'Không có file' });
+  const stream = cloudinary.uploader.upload_stream(
+    { folder: 'truyen-huba', resource_type: 'image' },
+    (err, result) => {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json({ url: result.secure_url });
+    }
+  );
+  stream.end(req.file.buffer);
+});
 
 // Login
 router.post('/login', (req, res) => {
@@ -181,17 +197,19 @@ router.get('/affiliate', adminAuth, (req, res) => {
 });
 
 router.post('/affiliate', adminAuth, (req, res) => {
-  const { name, url, description, trigger_after } = req.body;
+  const { name, url, image_url, description, trigger_after, time_trigger } = req.body;
   try {
-    const r = db.prepare('INSERT INTO affiliate_links (name,url,description,trigger_after) VALUES (?,?,?,?)').run(name, url, description || '', parseInt(trigger_after) || 3);
+    const r = db.prepare('INSERT INTO affiliate_links (name,url,image_url,description,trigger_after,time_trigger) VALUES (?,?,?,?,?,?)').run(
+      name, url, image_url || '', description || '', parseInt(trigger_after) || 4, parseInt(time_trigger) ?? 5
+    );
     res.json({ id: r.lastInsertRowid });
   } catch (e) { res.status(400).json({ error: e.message }); }
 });
 
 router.put('/affiliate/:id', adminAuth, (req, res) => {
-  const { name, url, description, trigger_after, active } = req.body;
-  db.prepare('UPDATE affiliate_links SET name=?,url=?,description=?,trigger_after=?,active=? WHERE id=?')
-    .run(name, url, description, parseInt(trigger_after) || 3, active ? 1 : 0, req.params.id);
+  const { name, url, image_url, description, trigger_after, time_trigger, active } = req.body;
+  db.prepare('UPDATE affiliate_links SET name=?,url=?,image_url=?,description=?,trigger_after=?,time_trigger=?,active=? WHERE id=?')
+    .run(name, url, image_url || '', description, parseInt(trigger_after) || 4, parseInt(time_trigger) ?? 5, active ? 1 : 0, req.params.id);
   res.json({ ok: true });
 });
 

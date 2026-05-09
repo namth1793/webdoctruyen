@@ -621,11 +621,11 @@ for (const [slug, tags] of Object.entries(storyTagLinks)) {
 }
 
 // Affiliate links
-db.prepare(`INSERT INTO affiliate_links (name, url, description, trigger_after, active) VALUES (?, ?, ?, ?, ?)`).run(
-  'Tặng code VIP đọc truyện',
-  'https://example.com/vip-offer',
-  'Nhấn để nhận mã VIP đọc truyện không giới hạn!',
-  3, 1
+db.prepare(`INSERT INTO affiliate_links (name, url, description, trigger_after, time_trigger, active) VALUES (?, ?, ?, ?, ?, ?)`).run(
+  'Mua sắm tại Shopee — ủng hộ Truyện Huba',
+  'https://shope.ee/truyen-huba',
+  'Ghé Shopee mua sắm để ủng hộ web đọc truyện miễn phí nhé!',
+  4, 5, 1
 );
 
 // Sample comments
