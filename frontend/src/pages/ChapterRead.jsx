@@ -33,8 +33,8 @@ export default function ChapterRead() {
 
   const theme = THEMES.find(t => t.id === themeId) || THEMES[0];
 
-  // Gate key per chapter — tracks if user already unlocked this chapter
-  const gateKey = `gate_done_${storySlug}_${chNum}`;
+  // Gate "once per day" key — dùng localStorage + ngày hôm nay
+  const todayKey = `gate_done_${new Date().toDateString()}`;
   // Chapter-based trigger: chap 2, 6, 10, 14, ...
   const isGateChapter = !isNaN(chNum) && chNum >= 2 && (chNum - 2) % 4 === 0;
 
@@ -53,9 +53,9 @@ export default function ChapterRead() {
       .then(r => setAllChapters(r.data.chapters));
   }, [storySlug]);
 
-  // Affiliate gate setup: chapter-based + time-based
+  // Affiliate gate setup: chapter-based + time-based, mỗi ngày 1 lần
   useEffect(() => {
-    if (sessionStorage.getItem(gateKey)) return;
+    if (localStorage.getItem(todayKey)) return;
 
     axios.get('/api/affiliate/active').then(r => {
       if (!r.data) return;
@@ -70,7 +70,7 @@ export default function ChapterRead() {
       const mins = r.data.time_trigger ?? 5;
       if (mins > 0) {
         gateTimerRef.current = setTimeout(() => {
-          if (!sessionStorage.getItem(gateKey)) setShowGate(true);
+          if (!localStorage.getItem(todayKey)) setShowGate(true);
         }, mins * 60 * 1000);
       }
     }).catch(() => {});
@@ -117,7 +117,7 @@ export default function ChapterRead() {
   const handleAffiliateClick = () => {
     if (!gateLink) return;
     axios.post(`/api/affiliate/click/${gateLink.id}`).catch(() => {});
-    sessionStorage.setItem(gateKey, '1');
+    localStorage.setItem(todayKey, '1');
     setGateClicked(true);
   };
 
@@ -136,57 +136,63 @@ export default function ChapterRead() {
 
       {/* ===== Affiliate Gate Overlay ===== */}
       {showGate && gateLink && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-sm px-4">
-          <div className="w-full max-w-md rounded-2xl bg-white dark:bg-gray-900 shadow-2xl overflow-hidden">
-            {/* Banner image (nếu có) */}
-            {gateLink.image_url ? (
-              <img src={gateLink.image_url} alt="banner" className="w-full h-40 object-cover" />
-            ) : (
-              <div className="h-1.5 w-full bg-gradient-to-r from-orange-400 via-pink-500 to-purple-500" />
-            )}
+        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm">
+          <div className="w-full sm:max-w-sm bg-white dark:bg-gray-900 rounded-t-3xl sm:rounded-2xl shadow-2xl overflow-hidden">
 
-            <div className="p-6 text-center">
-              <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
-                Ủng hộ Truyện Huba 💙
-              </h2>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
-                Truyện Huba hoàn toàn <strong>miễn phí</strong>.
+            {/* Drag handle (mobile) */}
+            <div className="flex justify-center pt-3 pb-1 sm:hidden">
+              <div className="w-10 h-1 bg-gray-300 dark:bg-gray-600 rounded-full" />
+            </div>
+
+            <div className="px-5 pb-6 pt-2 sm:pt-5">
+              {/* Instruction text */}
+              <p className="text-sm text-gray-700 dark:text-gray-200 text-center leading-relaxed mb-1">
+                Để đọc tiếp, bạn vui lòng nhấp banner hoặc link và mở app Shopee ủng hộ{' '}
+                <strong>Truyện Huba</strong> nhé
               </p>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
-                {gateLink.description || 'Để tiếp tục đọc, hãy ghé thăm link bên dưới — điều này giúp chúng tôi duy trì server và cập nhật truyện mỗi ngày.'}
+              <p className="text-xs text-gray-400 dark:text-gray-500 text-center mb-4">
+                Việc này chỉ xuất hiện <strong>1 lần/ngày</strong>
               </p>
 
-              {!gateClicked ? (
-                <a
-                  href={gateLink.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
+              {/* URL dạng text link */}
+              <a href={gateLink.url} target="_blank" rel="noopener noreferrer"
+                onClick={handleAffiliateClick}
+                className="block text-center text-sm font-bold text-blue-600 dark:text-blue-400 hover:underline break-all mb-4">
+                {gateLink.url}
+              </a>
+
+              {/* Banner image — clickable */}
+              {gateLink.image_url && (
+                <a href={gateLink.url} target="_blank" rel="noopener noreferrer"
                   onClick={handleAffiliateClick}
-                  className="flex items-center justify-center gap-2 w-full px-6 py-3.5 rounded-xl bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white font-semibold text-sm transition-all shadow-lg hover:shadow-xl active:scale-95">
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                  </svg>
-                  {gateLink.name || 'Ghé thăm đối tác'}
+                  className="block mb-4 rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700 shadow-sm active:opacity-80">
+                  <img src={gateLink.image_url} alt="banner" className="w-full object-cover" />
                 </a>
-              ) : (
-                <div className="space-y-3">
-                  <div className="flex items-center justify-center gap-2 text-green-600 dark:text-green-400 text-sm font-medium">
-                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    Cảm ơn bạn đã ủng hộ!
-                  </div>
-                  <button
-                    onClick={() => setShowGate(false)}
-                    className="w-full px-6 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm transition-all shadow-lg active:scale-95">
-                    Tiếp tục đọc →
-                  </button>
-                </div>
               )}
 
-              <p className="mt-4 text-xs text-gray-400 dark:text-gray-500">
-                Chỉ 1 lần mỗi chương. Không cần đăng nhập hay mua gì cả.
-              </p>
+              {/* Mô tả sản phẩm */}
+              {gateLink.description && (
+                <p className="text-sm text-gray-600 dark:text-gray-400 text-center leading-relaxed mb-4">
+                  {gateLink.description}
+                </p>
+              )}
+
+              {/* Sau khi click */}
+              {gateClicked ? (
+                <button onClick={() => setShowGate(false)}
+                  className="w-full py-3.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold rounded-xl text-sm transition-colors">
+                  Tiếp tục đọc →
+                </button>
+              ) : (
+                <a href={gateLink.url} target="_blank" rel="noopener noreferrer"
+                  onClick={handleAffiliateClick}
+                  className="flex items-center justify-center gap-2 w-full py-3.5 bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white font-semibold rounded-xl text-sm transition-colors">
+                  <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                  Mở Shopee ủng hộ
+                </a>
+              )}
             </div>
           </div>
         </div>

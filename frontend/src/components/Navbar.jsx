@@ -96,14 +96,13 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 shadow-md">
       {/* Top bar — ẩn khi scroll */}
-      <div className={`bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 overflow-hidden transition-all duration-300 ${scrolled ? 'max-h-0 opacity-0' : 'max-h-20 opacity-100'}`}>
+      <div className={`bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 overflow-hidden transition-all duration-300 max-h-14 sm:max-h-20 opacity-100 ${scrolled ? 'md:max-h-0 md:opacity-0' : ''}`}>
         <div className="max-w-7xl mx-auto px-3 sm:px-4 h-14 sm:h-20 flex items-center gap-2 sm:gap-4">
           {/* Logo — compact on mobile */}
           <Link to="/" className="flex items-center gap-2 shrink-0">
             <img src="/assets/logo.png" alt="Truyện Huba" className="w-10 h-10 sm:w-20 sm:h-20 object-contain shrink-0" />
             <div className="leading-tight hidden sm:block">
               <div className="font-black text-blue-700 dark:text-blue-400 text-base leading-none">Truyện Huba</div>
-              <div className="text-[10px] text-gray-400 dark:text-gray-500 leading-tight italic">Ngày đọc 1 chap, đêm cuốn không ngủ</div>
             </div>
             <span className="sm:hidden font-black text-blue-700 dark:text-blue-400 text-sm leading-none">Huba</span>
           </Link>

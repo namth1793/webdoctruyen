@@ -11,8 +11,7 @@ export default function Footer() {
               <img src="/assets/logo.png" alt="Truyện Huba" className="w-8 h-8 object-contain" />
               <span className="font-bold text-lg text-gray-900">Truyện Huba</span>
             </Link>
-            <p className="text-sm italic text-blue-600 font-medium mb-2">Ngày đọc 1 chap, đêm cuốn không ngủ</p>
-            <p className="text-sm text-gray-500 leading-relaxed mb-5">
+<p className="text-sm text-gray-500 leading-relaxed mb-5">
               Truyện Huba là nền tảng đọc truyện online dành cho những ai yêu thích thế giới truyện chữ đa dạng và hấp dẫn.
               Với trải nghiệm đọc mượt mà, nội dung phong phú liên tục đổi mới – đọc là cuốn, xem là mê.
             </p>
