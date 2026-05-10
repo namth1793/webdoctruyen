@@ -180,7 +180,7 @@ export default function Navbar() {
       {/* Bottom blue nav bar (desktop) */}
       <div ref={navRef} className="bg-blue-600 hidden md:block">
         <div className="max-w-7xl mx-auto px-4">
-          <nav className="flex items-center gap-0.5 py-1.5">
+          <nav className="flex items-center justify-center gap-0.5 py-1.5">
 
             {/* Trang chủ */}
             <Link to="/" className={navBtn(isActive('/'))}>Trang chủ</Link>
@@ -241,7 +241,6 @@ export default function Navbar() {
               </Link>
             )}
 
-            <div className="flex-1" />
 
             {/* Menu dropdown */}
             <div className="relative">
