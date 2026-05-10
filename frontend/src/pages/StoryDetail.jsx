@@ -164,8 +164,8 @@ export default function StoryDetail() {
       <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden mb-6">
         <div className="p-5 md:p-6">
           <div className="flex flex-col sm:flex-row gap-5">
-            <div className="flex-shrink-0 self-start">
-              <div className="w-36 sm:w-44 rounded-xl overflow-hidden shadow-lg">
+            <div className="flex-shrink-0 flex sm:block justify-center">
+              <div className="w-32 sm:w-44 rounded-xl overflow-hidden shadow-lg">
                 <img src={story.cover_image} alt={story.title}
                   className="w-full aspect-[3/4] object-cover"
                   onError={e => { e.target.src = `https://picsum.photos/seed/${story.slug}/300/400`; }}
@@ -223,7 +223,7 @@ export default function StoryDetail() {
               )}
 
               {/* Stats */}
-              <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mb-5">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-gray-500 dark:text-gray-400 mb-5">
                 <span className="flex items-center gap-1.5">
                   <svg className="w-4 h-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
                   {story.total_chapters} chương
@@ -239,20 +239,20 @@ export default function StoryDetail() {
               </div>
 
               {/* Action buttons */}
-              <div className="flex flex-wrap gap-2">
+              <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2">
                 <Link to={`/doc/${story.slug}/chuong-1`}
-                  className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors">
+                  className="col-span-2 sm:col-span-1 flex items-center justify-center gap-2 px-5 py-3 sm:py-2.5 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white text-sm font-semibold rounded-xl sm:rounded-lg transition-colors">
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
                   Đọc từ đầu
                 </Link>
                 {story.total_chapters > 1 && (
                   <Link to={`/doc/${story.slug}/chuong-${story.total_chapters}`}
-                    className="flex items-center gap-2 px-5 py-2.5 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 text-sm font-medium rounded-lg transition-colors">
-                    Chương mới nhất
+                    className="flex items-center justify-center gap-2 px-5 py-3 sm:py-2.5 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 active:bg-gray-300 text-gray-700 dark:text-gray-200 text-sm font-medium rounded-xl sm:rounded-lg transition-colors">
+                    Chương mới
                   </Link>
                 )}
                 <button onClick={handleBookmark} disabled={bookmarking}
-                  className={`flex items-center gap-2 px-5 py-2.5 text-sm font-medium rounded-lg transition-colors ${bookmarked ? 'bg-red-50 text-red-600 hover:bg-red-100' : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200'}`}>
+                  className={`flex items-center justify-center gap-2 px-5 py-3 sm:py-2.5 text-sm font-medium rounded-xl sm:rounded-lg transition-colors ${bookmarked ? 'bg-red-50 dark:bg-red-900/20 text-red-600 hover:bg-red-100' : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200'}`}>
                   <svg className="w-4 h-4" fill={bookmarked ? 'currentColor' : 'none'} viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                   </svg>

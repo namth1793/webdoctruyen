@@ -224,9 +224,9 @@ export default function ChapterRead() {
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium opacity-70">Cỡ chữ</span>
                 <div className="flex items-center gap-2">
-                  <button onClick={() => changeFontSize(fontSize - 2)} className="w-8 h-8 rounded-full border border-current/20 flex items-center justify-center text-lg font-bold hover:bg-black/10">−</button>
-                  <span className="text-sm w-8 text-center">{fontSize}</span>
-                  <button onClick={() => changeFontSize(fontSize + 2)} className="w-8 h-8 rounded-full border border-current/20 flex items-center justify-center text-lg font-bold hover:bg-black/10">+</button>
+                  <button onClick={() => changeFontSize(fontSize - 2)} className="w-10 h-10 rounded-full border border-current/20 flex items-center justify-center text-xl font-bold hover:bg-black/10 active:bg-black/20">−</button>
+                  <span className="text-sm w-8 text-center font-semibold">{fontSize}</span>
+                  <button onClick={() => changeFontSize(fontSize + 2)} className="w-10 h-10 rounded-full border border-current/20 flex items-center justify-center text-xl font-bold hover:bg-black/10 active:bg-black/20">+</button>
                 </div>
               </div>
               <div className="flex items-center justify-between">
@@ -261,8 +261,40 @@ export default function ChapterRead() {
         )}
       </div>
 
+      {/* Mobile sticky chapter nav */}
+      <div className={`md:hidden fixed bottom-0 left-0 right-0 z-30 flex border-t ${theme.border} ${theme.bg}`}
+        style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+        {prev ? (
+          <Link to={`/doc/${storySlug}/chuong-${prev.chapter_number}`}
+            className={`flex-1 flex items-center justify-center gap-1.5 py-3.5 text-sm font-semibold border-r ${theme.border} active:bg-black/5 ${theme.text}`}>
+            <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+            Trước
+          </Link>
+        ) : (
+          <div className={`flex-1 flex items-center justify-center gap-1.5 py-3.5 text-sm opacity-30 border-r ${theme.border}`}>
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+            Trước
+          </div>
+        )}
+        <Link to={`/truyen/${storySlug}`} className={`px-5 py-3.5 flex items-center justify-center border-r ${theme.border} active:bg-black/5 ${theme.text}`}>
+          <svg className="w-5 h-5 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+        </Link>
+        {next ? (
+          <Link to={`/doc/${storySlug}/chuong-${next.chapter_number}`}
+            className={`flex-1 flex items-center justify-center gap-1.5 py-3.5 text-sm font-semibold active:bg-black/5 ${theme.text}`}>
+            Tiếp
+            <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+          </Link>
+        ) : (
+          <div className={`flex-1 flex items-center justify-center gap-1.5 py-3.5 text-sm opacity-30 ${theme.text}`}>
+            Hết
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+          </div>
+        )}
+      </div>
+
       {/* Main content */}
-      <div className="max-w-3xl mx-auto px-4 pt-20 pb-24">
+      <div className="max-w-3xl mx-auto px-4 pt-20 pb-32 md:pb-24">
         <div className="text-center mb-8">
           <Link to={`/truyen/${storySlug}`} className="text-sm text-blue-600 hover:underline">{story.title}</Link>
           <h1 className="text-xl font-bold mt-2">{chapter.title || `Chương ${chapter.chapter_number}`}</h1>

@@ -89,7 +89,6 @@ export default function Home() {
   const beachBg = {
     backgroundImage: `url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80')`,
     backgroundSize: 'cover',
-    backgroundAttachment: 'fixed',
     backgroundPosition: 'center bottom',
   };
 
@@ -98,10 +97,10 @@ export default function Home() {
 
       {/* ── HERO BANNER ── */}
       {cur && (
-        <div className="relative overflow-hidden" style={{ minHeight: 420 }}>
+        <div className="relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-transparent pointer-events-none" />
 
-          <div className="relative max-w-7xl mx-auto px-4 py-10 flex items-center gap-6 md:gap-10 min-h-[420px]">
+          <div className="relative max-w-7xl mx-auto px-4 py-6 sm:py-10 flex items-center gap-4 sm:gap-6 md:gap-10 min-h-[280px] sm:min-h-[380px] md:min-h-[420px]">
             {/* Phone frame */}
             <div className="hidden sm:block shrink-0">
               <div className="relative bg-white rounded-3xl shadow-2xl p-1 border-4 border-white w-[250px]">
@@ -117,13 +116,13 @@ export default function Home() {
 
             {/* Story info */}
             <div className="flex-1 min-w-0">
-              <h2 className="text-2xl md:text-4xl font-black text-white mb-3 leading-tight uppercase drop-shadow-lg">
+              <h2 className="text-xl sm:text-2xl md:text-4xl font-black text-white mb-2 sm:mb-3 leading-tight uppercase drop-shadow-lg line-clamp-2">
                 {cur.title}
               </h2>
-              <p className="text-sm md:text-base text-white/90 leading-relaxed mb-4 line-clamp-4 max-w-xl drop-shadow">
+              <p className="hidden sm:block text-sm md:text-base text-white/90 leading-relaxed mb-4 line-clamp-3 max-w-xl drop-shadow">
                 {cur.description}
               </p>
-              <div className="flex flex-wrap items-center gap-2 mb-5">
+              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-4 sm:mb-5">
                 {cur.category_name && <span className="text-sm font-semibold text-white drop-shadow">{cur.category_name}</span>}
                 {(cur.genres || []).slice(0, 2).map(g => (
                   <span key={g} className="text-sm font-semibold text-white drop-shadow">{g}</span>
@@ -140,7 +139,7 @@ export default function Home() {
                 </span>
               </div>
               <Link to={`/doc/${cur.slug}/chuong-1`}
-                className="inline-flex items-center gap-2 px-7 py-3 bg-blue-600 hover:bg-blue-700 text-white text-base font-bold rounded-xl shadow-lg transition-all hover:-translate-y-0.5">
+                className="inline-flex items-center gap-2 px-5 sm:px-7 py-2.5 sm:py-3 bg-blue-600 hover:bg-blue-700 text-white text-sm sm:text-base font-bold rounded-xl shadow-lg transition-all hover:-translate-y-0.5 active:scale-95">
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z" />
                 </svg>

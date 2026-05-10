@@ -97,20 +97,21 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 shadow-md">
       {/* Top bar — ẩn khi scroll */}
       <div className={`bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 overflow-hidden transition-all duration-300 ${scrolled ? 'max-h-0 opacity-0' : 'max-h-20 opacity-100'}`}>
-        <div className="max-w-7xl mx-auto px-4 h-20 flex items-center gap-4">
-          {/* Logo */}
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 h-14 sm:h-20 flex items-center gap-2 sm:gap-4">
+          {/* Logo — compact on mobile */}
           <Link to="/" className="flex items-center gap-2 shrink-0">
-            <img src="/assets/logo.png" alt="Truyện Huba" className="w-20 h-20 object-contain shrink-0" />
-            <div className="leading-tight">
+            <img src="/assets/logo.png" alt="Truyện Huba" className="w-10 h-10 sm:w-20 sm:h-20 object-contain shrink-0" />
+            <div className="leading-tight hidden sm:block">
               <div className="font-black text-blue-700 dark:text-blue-400 text-base leading-none">Truyện Huba</div>
               <div className="text-[10px] text-gray-400 dark:text-gray-500 leading-tight italic">Ngày đọc 1 chap, đêm cuốn không ngủ</div>
             </div>
+            <span className="sm:hidden font-black text-blue-700 dark:text-blue-400 text-sm leading-none">Huba</span>
           </Link>
 
           {/* Search */}
-          <div ref={searchBoxRef} className="flex-1 max-w-2xl mx-auto relative">
+          <div ref={searchBoxRef} className="flex-1 min-w-0 max-w-2xl mx-auto relative">
             <form onSubmit={handleSearch}>
-              <div className="flex items-center bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full px-4 py-2 gap-2 focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-100 transition-all">
+              <div className="flex items-center bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full px-3 sm:px-4 py-2 gap-2 focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-100 transition-all">
                 <svg className="w-4 h-4 text-gray-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
@@ -119,7 +120,7 @@ export default function Navbar() {
                   value={query}
                   onChange={e => setQuery(e.target.value)}
                   placeholder="Tìm kiếm truyện..."
-                  className="flex-1 bg-transparent text-sm text-gray-700 dark:text-gray-200 outline-none placeholder-gray-400"
+                  className="flex-1 min-w-0 bg-transparent text-sm text-gray-700 dark:text-gray-200 outline-none placeholder-gray-400"
                   autoComplete="off"
                 />
               </div>
@@ -137,7 +138,7 @@ export default function Navbar() {
                   </Link>
                 ))}
                 <button onClick={handleSearch}
-                  className="w-full text-center text-sm text-blue-600 py-2.5 border-t border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
+                  className="w-full text-center text-sm text-blue-600 py-3 border-t border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700">
                   Xem tất cả kết quả →
                 </button>
               </div>
@@ -145,7 +146,7 @@ export default function Navbar() {
           </div>
 
           {/* Right */}
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center gap-1 sm:gap-2 shrink-0">
             <button onClick={() => setDarkMode(p => !p)}
               className="w-9 h-9 flex items-center justify-center rounded-full border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
               {darkMode
@@ -168,7 +169,7 @@ export default function Navbar() {
                 </Link>
               </div>
             )}
-            <button onClick={() => setMobileOpen(p => !p)} className="md:hidden p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
+            <button onClick={() => setMobileOpen(p => !p)} className="md:hidden w-9 h-9 flex items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
               <svg className="w-5 h-5 text-gray-600 dark:text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={mobileOpen ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16M4 18h16'} />
               </svg>
@@ -294,28 +295,64 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile nav */}
+      {/* Mobile menu */}
       {mobileOpen && (
-        <div className="md:hidden bg-blue-600 border-t border-blue-500">
-          <Link to="/" className="block px-5 py-3 text-sm text-white font-medium hover:bg-blue-700 border-b border-blue-500/40">Trang chủ</Link>
-          <div className="px-5 py-1.5 text-xs text-blue-200 font-semibold uppercase tracking-wide bg-blue-700/40">Thể loại</div>
-          {THE_LOAI.map(g => (
-            <Link key={g.to} to={g.to} className="block px-7 py-2.5 text-sm text-white hover:bg-blue-700 border-b border-blue-500/20">{g.label}</Link>
-          ))}
-          <Link to="/tim-kiem?sort=new" className="block px-5 py-3 text-sm text-white font-medium hover:bg-blue-700 border-b border-blue-500/40">Truyện mới</Link>
-          <Link to="/tim-kiem?sort=views" className="block px-5 py-3 text-sm text-white font-medium hover:bg-blue-700 border-b border-blue-500/40">Xem nhiều</Link>
-          <Link to="/tim-kiem?status=complete" className="block px-5 py-3 text-sm text-white font-medium hover:bg-blue-700 border-b border-blue-500/40">✓ Hoàn thành</Link>
-          <Link to="/tim-kiem?status=ongoing" className="block px-5 py-3 text-sm text-white font-medium hover:bg-blue-700 border-b border-blue-500/40">↻ Đang ra</Link>
+        <div className="md:hidden bg-blue-600 border-t border-blue-500 max-h-[70vh] overflow-y-auto">
+          <Link to="/" className="flex items-center gap-2 px-5 py-3.5 text-sm text-white font-semibold hover:bg-blue-700 border-b border-blue-500/40">
+            <svg className="w-4 h-4 opacity-80" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+            Trang chủ
+          </Link>
+
+          {/* Thể loại - grid 2 cột */}
+          <div>
+            <button onClick={() => toggleDrop('mb-theloai')}
+              className="flex items-center justify-between w-full px-5 py-3.5 text-sm text-white font-semibold hover:bg-blue-700 border-b border-blue-500/40">
+              <span className="flex items-center gap-2">
+                <svg className="w-4 h-4 opacity-80" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg>
+                Thể loại
+              </span>
+              <svg className={`w-4 h-4 transition-transform ${openDrop === 'mb-theloai' ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
+            </button>
+            {openDrop === 'mb-theloai' && (
+              <div className="grid grid-cols-2 gap-1 p-3 bg-blue-700/50 border-b border-blue-500/40">
+                {THE_LOAI.map(g => (
+                  <Link key={g.to} to={g.to} className="px-3 py-2 text-sm text-white/90 hover:bg-blue-600 rounded-lg font-medium">{g.label}</Link>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <Link to="/tim-kiem?sort=new" className="flex items-center gap-2 px-5 py-3.5 text-sm text-white font-semibold hover:bg-blue-700 border-b border-blue-500/40">
+            <svg className="w-4 h-4 opacity-80" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            Truyện mới
+          </Link>
+          <Link to="/tim-kiem?sort=views" className="flex items-center gap-2 px-5 py-3.5 text-sm text-white font-semibold hover:bg-blue-700 border-b border-blue-500/40">
+            <svg className="w-4 h-4 opacity-80" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+            Xem nhiều
+          </Link>
+          <Link to="/tim-kiem?status=complete" className="flex items-center gap-2 px-5 py-3.5 text-sm text-white font-semibold hover:bg-blue-700 border-b border-blue-500/40">
+            <span className="text-green-300">✓</span> Hoàn thành
+          </Link>
+          <Link to="/tim-kiem?status=ongoing" className="flex items-center gap-2 px-5 py-3.5 text-sm text-white font-semibold hover:bg-blue-700 border-b border-blue-500/40">
+            <span className="text-blue-200">↻</span> Đang ra
+          </Link>
+
           {user ? (
             <>
-              <Link to="/tu-truyen" className="block px-5 py-3 text-sm text-white font-medium hover:bg-blue-700 border-b border-blue-500/40">❤ Tủ truyện</Link>
-              <button onClick={logout} className="block w-full text-left px-5 py-3 text-sm text-red-300 font-medium hover:bg-blue-700 border-b border-blue-500/40">Đăng xuất</button>
+              <Link to="/tu-truyen" className="flex items-center gap-2 px-5 py-3.5 text-sm text-white font-semibold hover:bg-blue-700 border-b border-blue-500/40">
+                <svg className="w-4 h-4 text-red-300" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" /></svg>
+                Tủ truyện
+              </Link>
+              <button onClick={logout} className="flex items-center gap-2 w-full text-left px-5 py-3.5 text-sm text-red-300 font-semibold hover:bg-blue-700">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+                Đăng xuất
+              </button>
             </>
           ) : (
-            <>
-              <Link to="/dang-nhap" className="block px-5 py-3 text-sm text-white font-medium hover:bg-blue-700 border-b border-blue-500/40">Đăng nhập</Link>
-              <Link to="/dang-ky" className="block px-5 py-3 text-sm text-white font-medium hover:bg-blue-700">Đăng ký</Link>
-            </>
+            <div className="flex gap-2 p-4">
+              <Link to="/dang-nhap" className="flex-1 text-center py-2.5 bg-white/10 hover:bg-white/20 text-white text-sm font-semibold rounded-xl border border-white/30 transition-colors">Đăng nhập</Link>
+              <Link to="/dang-ky" className="flex-1 text-center py-2.5 bg-white hover:bg-blue-50 text-blue-700 text-sm font-semibold rounded-xl transition-colors">Đăng ký</Link>
+            </div>
           )}
         </div>
       )}
