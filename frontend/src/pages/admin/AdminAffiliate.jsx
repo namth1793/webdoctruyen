@@ -7,7 +7,7 @@ const API = (path, opts = {}) => {
   return axios({ url: `/api/admin${path}`, headers: { Authorization: `Bearer ${token}` }, ...opts });
 };
 
-const empty = { name: '', url: '', image_url: '', description: '', trigger_after: 4, time_trigger: 5, active: true };
+const empty = { name: '', url: '', image_url: '', description: '', active: true };
 
 export default function AdminAffiliate() {
   const [links, setLinks] = useState([]);
@@ -60,14 +60,14 @@ export default function AdminAffiliate() {
 
   const startEdit = (l) => {
     setEditing(l.id);
-    setForm({ ...l, active: !!l.active, image_url: l.image_url || '', time_trigger: l.time_trigger ?? 5 });
+    setForm({ ...l, active: !!l.active, image_url: l.image_url || '' });
   };
 
   return (
     <div className="p-6">
       <h1 className="text-xl font-bold text-gray-900 mb-2">Affiliate Links</h1>
       <p className="text-sm text-gray-500 mb-5">
-        Cấu hình cửa sổ affiliate. Chỉ 1 link <span className="text-green-600 font-medium">active</span> có hiệu lực.
+        Quản lý link affiliate. Tất cả link <span className="text-green-600 font-medium">active</span> đều có hiệu lực — mỗi lần user đọc chương chẵn (2, 4, 6...) sẽ hiện <strong>1 link ngẫu nhiên</strong> từ danh sách.
       </p>
 
       <div className="grid lg:grid-cols-2 gap-6">
@@ -140,28 +140,6 @@ export default function AdminAffiliate() {
                 placeholder="Ghé Shopee ủng hộ web đọc truyện nhé!" />
             </div>
 
-            {/* Triggers */}
-            <div className="flex gap-4">
-              <div className="flex-1">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Hiện sau mỗi N chương</label>
-                <div className="flex items-center gap-2">
-                  <input type="number" min={1} max={50} value={form.trigger_after}
-                    onChange={e => setForm(p => ({ ...p, trigger_after: parseInt(e.target.value) || 4 }))}
-                    className="w-20 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                  <span className="text-xs text-gray-500">chương</span>
-                </div>
-              </div>
-              <div className="flex-1">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Hiện sau N phút đọc</label>
-                <div className="flex items-center gap-2">
-                  <input type="number" min={0} max={60} value={form.time_trigger ?? 5}
-                    onChange={e => setForm(p => ({ ...p, time_trigger: parseInt(e.target.value) || 0 }))}
-                    className="w-20 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                  <span className="text-xs text-gray-500">phút (0 = tắt)</span>
-                </div>
-              </div>
-            </div>
-
             {/* Active */}
             <div className="flex items-center gap-2">
               <input type="checkbox" id="active" checked={!!form.active}
@@ -204,8 +182,6 @@ export default function AdminAffiliate() {
                       className="text-xs text-blue-600 hover:underline truncate block">{l.url}</a>
                     {l.description && <p className="text-xs text-gray-500 mt-1 line-clamp-2">{l.description}</p>}
                     <div className="flex items-center gap-3 mt-2 text-xs text-gray-400">
-                      <span>Chương: mỗi {l.trigger_after}</span>
-                      {(l.time_trigger > 0) && <span>Thời gian: {l.time_trigger} phút</span>}
                       <span>Clicks: {(l.clicks || 0).toLocaleString('vi-VN')}</span>
                     </div>
                   </div>

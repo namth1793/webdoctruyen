@@ -28,15 +28,12 @@ export default function ChapterRead() {
   const [gateLink, setGateLink] = useState(null);
   const [showGate, setShowGate] = useState(false);
   const [gateClicked, setGateClicked] = useState(false);
-  const gateTimerRef = useRef(null);
   const lastScrollY = useRef(0);
 
   const theme = THEMES.find(t => t.id === themeId) || THEMES[0];
 
-  // Gate "once per day" key — dùng localStorage + ngày hôm nay
-  const todayKey = `gate_done_${new Date().toDateString()}`;
-  // Chapter-based trigger: chap 2, 6, 10, 14, ...
-  const isGateChapter = !isNaN(chNum) && chNum >= 2 && (chNum - 2) % 4 === 0;
+  // Gate: mọi chương chẵn (2, 4, 6, 8, ...)
+  const isGateChapter = !isNaN(chNum) && chNum % 2 === 0;
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -53,29 +50,17 @@ export default function ChapterRead() {
       .then(r => setAllChapters(r.data.chapters));
   }, [storySlug]);
 
-  // Affiliate gate setup: chapter-based + time-based, mỗi ngày 1 lần
+  // Affiliate gate: luôn hiện ở chương chẵn, random link mỗi lần
   useEffect(() => {
-    if (localStorage.getItem(todayKey)) return;
-
+    if (!isGateChapter) return;
+    setGateLink(null);
+    setShowGate(false);
+    setGateClicked(false);
     axios.get('/api/affiliate/active').then(r => {
       if (!r.data) return;
       setGateLink(r.data);
-
-      if (isGateChapter) {
-        setShowGate(true);
-        return;
-      }
-
-      // Time-based trigger
-      const mins = r.data.time_trigger ?? 5;
-      if (mins > 0) {
-        gateTimerRef.current = setTimeout(() => {
-          if (!localStorage.getItem(todayKey)) setShowGate(true);
-        }, mins * 60 * 1000);
-      }
+      setShowGate(true);
     }).catch(() => {});
-
-    return () => { if (gateTimerRef.current) clearTimeout(gateTimerRef.current); };
   }, [storySlug, chNum]);
 
   // Scroll progress + hide/show nav
@@ -93,15 +78,16 @@ export default function ChapterRead() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Arrow key navigation
+  // Arrow key navigation (disabled khi gate đang hiện)
   useEffect(() => {
     const handler = (e) => {
+      if (showGate) return;
       if (e.key === 'ArrowLeft' && data?.prev) navigate(`/doc/${storySlug}/chuong-${data.prev.chapter_number}`);
       if (e.key === 'ArrowRight' && data?.next) navigate(`/doc/${storySlug}/chuong-${data.next.chapter_number}`);
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [data]);
+  }, [data, showGate]);
 
   const changeFontSize = (val) => {
     const newSize = Math.max(14, Math.min(24, val));
@@ -117,7 +103,6 @@ export default function ChapterRead() {
   const handleAffiliateClick = () => {
     if (!gateLink) return;
     axios.post(`/api/affiliate/click/${gateLink.id}`).catch(() => {});
-    localStorage.setItem(todayKey, '1');
     setGateClicked(true);
   };
 
@@ -146,12 +131,9 @@ export default function ChapterRead() {
 
             <div className="px-5 pb-6 pt-2 sm:pt-5">
               {/* Instruction text */}
-              <p className="text-sm text-gray-700 dark:text-gray-200 text-center leading-relaxed mb-1">
-                Để đọc tiếp, bạn vui lòng nhấp banner hoặc link và mở app Shopee ủng hộ{' '}
-                <strong>Truyện Huba</strong> nhé
-              </p>
-              <p className="text-xs text-gray-400 dark:text-gray-500 text-center mb-4">
-                Việc này chỉ xuất hiện <strong>1 lần/ngày</strong>
+              <p className="text-sm text-gray-700 dark:text-gray-200 text-center leading-relaxed mb-4">
+                Để đọc tiếp, bạn vui lòng nhấp vào link bên dưới để ủng hộ{' '}
+                <strong>Truyện Huba</strong> nhé! Cảm ơn bạn rất nhiều
               </p>
 
               {/* URL dạng text link */}

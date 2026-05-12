@@ -2,7 +2,7 @@ const router = require('express').Router();
 const db = require('../db/schema');
 
 router.get('/active', (req, res) => {
-  const link = db.prepare('SELECT * FROM affiliate_links WHERE active = 1 ORDER BY id DESC LIMIT 1').get();
+  const link = db.prepare('SELECT * FROM affiliate_links WHERE active = 1 ORDER BY RANDOM() LIMIT 1').get();
   res.json(link || null);
 });
 

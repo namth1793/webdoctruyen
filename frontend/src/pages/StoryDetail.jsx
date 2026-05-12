@@ -73,7 +73,7 @@ export default function StoryDetail() {
 
   useEffect(() => {
     if (!story) return;
-    axios.get(`/api/chapters/${slug}?page=${chapPage}&limit=50`).then(r => {
+    axios.get(`/api/chapters/${slug}?page=${chapPage}&limit=20`).then(r => {
       setChapters(r.data.chapters);
       setTotalChapters(r.data.total);
     });
@@ -142,7 +142,7 @@ export default function StoryDetail() {
   );
   if (!story) return null;
 
-  const chapTotalPages = Math.ceil(totalChapters / 50);
+  const chapTotalPages = Math.ceil(totalChapters / 20);
   const avgScore = ratingStats?.avg ? parseFloat(ratingStats.avg).toFixed(1) : '—';
 
   return (
@@ -308,6 +308,7 @@ export default function StoryDetail() {
               className="flex items-center gap-3 px-4 py-3 hover:bg-blue-50 dark:hover:bg-gray-700/50 transition-colors group">
               <span className="text-sm text-gray-500 w-20 shrink-0 group-hover:text-blue-600">Chương {ch.chapter_number}</span>
               <span className="text-sm text-gray-800 dark:text-gray-200 truncate group-hover:text-blue-700 flex-1">{ch.title || `Chương ${ch.chapter_number}`}</span>
+              <span className="text-xs text-gray-400 dark:text-gray-500 shrink-0 hidden sm:block">{timeAgo(ch.updated_at || ch.created_at)}</span>
             </Link>
           ))}
         </div>

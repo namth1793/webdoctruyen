@@ -2,20 +2,19 @@ import { Link } from 'react-router-dom';
 
 export default function Footer() {
   return (
-    <footer className="bg-white border-t border-gray-200 mt-12">
+    <footer className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 mt-12">
       <div className="max-w-7xl mx-auto px-4 py-10">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Brand */}
-          <div className="md:col-span-1">
+          <div>
             <Link to="/" className="flex items-center gap-2 mb-3">
               <img src="/assets/logo.png" alt="Truyện Huba" className="w-8 h-8 object-contain" />
-              <span className="font-bold text-lg text-gray-900">Truyện Huba</span>
+              <span className="font-bold text-lg text-gray-900 dark:text-white">Truyện Huba</span>
             </Link>
-<p className="text-sm text-gray-500 leading-relaxed mb-5">
-              Truyện Huba là nền tảng đọc truyện online dành cho những ai yêu thích thế giới truyện chữ đa dạng và hấp dẫn.
-              Với trải nghiệm đọc mượt mà, nội dung phong phú liên tục đổi mới – đọc là cuốn, xem là mê.
+            <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed mb-5">
+              Nền tảng đọc truyện online với kho nội dung phong phú, trải nghiệm mượt mà – đọc là cuốn, xem là mê.
             </p>
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Theo dõi</p>
+            <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-2">Theo dõi</p>
             <div className="flex gap-3">
               <a href="#" aria-label="Facebook"
                 className="w-9 h-9 bg-blue-600 rounded-full flex items-center justify-center text-white hover:bg-blue-700 transition-colors">
@@ -30,37 +29,37 @@ export default function Footer() {
 
           {/* Thể loại */}
           <div>
-            <h3 className="font-semibold text-gray-900 mb-3">Thể loại</h3>
-            <ul className="space-y-2 text-sm text-gray-500">
-              <li><Link to="/dam-my" className="hover:text-blue-600 transition-colors">Đam mỹ</Link></li>
-              <li><Link to="/the-loai/bach-hop" className="hover:text-blue-600 transition-colors">Bách hợp</Link></li>
-              <li><Link to="/ngon-tinh" className="hover:text-blue-600 transition-colors">Ngôn tình</Link></li>
-              <li><Link to="/the-loai/hien-dai" className="hover:text-blue-600 transition-colors">Hiện đại</Link></li>
-              <li><Link to="/the-loai/co-trang" className="hover:text-blue-600 transition-colors">Cổ trang</Link></li>
-              <li><Link to="/the-loai/mat-the" className="hover:text-blue-600 transition-colors">Mạt thế</Link></li>
-              <li><Link to="/the-loai/kinh-di" className="hover:text-blue-600 transition-colors">Kinh dị</Link></li>
-              <li><Link to="/the-loai/tuong-lai" className="hover:text-blue-600 transition-colors">Tương lai</Link></li>
+            <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Thể loại</h3>
+            <ul className="space-y-2 text-sm text-gray-500 dark:text-gray-400">
+              <li><Link to="/dam-my" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Đam mỹ</Link></li>
+              <li><Link to="/the-loai/bach-hop" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Bách hợp</Link></li>
+              <li><Link to="/ngon-tinh" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Ngôn tình</Link></li>
+              <li><Link to="/the-loai/hien-dai" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Hiện đại</Link></li>
+              <li><Link to="/the-loai/co-trang" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Cổ trang</Link></li>
+              <li><Link to="/the-loai/mat-the" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Mạt thế</Link></li>
+              <li><Link to="/the-loai/kinh-di" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Kinh dị</Link></li>
+              <li><Link to="/the-loai/tuong-lai" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Tương lai</Link></li>
             </ul>
           </div>
 
-          {/* Tình trạng + Thống kê */}
+          {/* Khám phá */}
           <div>
-            <h3 className="font-semibold text-gray-900 mb-3">Khám phá</h3>
-            <ul className="space-y-2 text-sm text-gray-500">
-              <li><Link to="/tim-kiem?sort=new" className="hover:text-blue-600 transition-colors">Truyện mới</Link></li>
-              <li><Link to="/tim-kiem?sort=views" className="hover:text-blue-600 transition-colors">Xem nhiều</Link></li>
-              <li><Link to="/tim-kiem?sort=favorites" className="hover:text-blue-600 transition-colors">Đề cử</Link></li>
-              <li><Link to="/tim-kiem?status=complete" className="hover:text-blue-600 transition-colors">Hoàn thành</Link></li>
-              <li><Link to="/tim-kiem?status=ongoing" className="hover:text-blue-600 transition-colors">Đang ra</Link></li>
-              <li><Link to="/lien-he" className="hover:text-blue-600 transition-colors">Liên hệ</Link></li>
+            <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Khám phá</h3>
+            <ul className="space-y-2 text-sm text-gray-500 dark:text-gray-400">
+              <li><Link to="/tim-kiem?sort=new" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Truyện mới</Link></li>
+              <li><Link to="/tim-kiem?sort=views" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Xem nhiều</Link></li>
+              <li><Link to="/tim-kiem?sort=favorites" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Đề cử</Link></li>
+              <li><Link to="/tim-kiem?status=complete" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Hoàn thành</Link></li>
+              <li><Link to="/tim-kiem?status=ongoing" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Đang ra</Link></li>
+              <li><Link to="/lien-he" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Liên hệ</Link></li>
             </ul>
-            <p className="text-xs text-gray-400 mt-5">Nội dung trên trang là bản dịch fan-made, không nhằm mục đích thương mại.</p>
+            <p className="text-xs text-gray-400 dark:text-gray-500 mt-5">Nội dung trên trang là bản dịch fan-made, không nhằm mục đích thương mại.</p>
           </div>
         </div>
 
-        <div className="mt-8 pt-6 border-t border-gray-100 flex items-center justify-between text-sm text-gray-400">
+        <div className="mt-8 pt-6 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between text-sm text-gray-400 dark:text-gray-500">
           <span>© 2025 Truyện Huba. All rights reserved.</span>
-          <Link to="/admin/login" className="text-xs text-gray-300 hover:text-gray-500 transition-colors">Admin</Link>
+          <Link to="/admin/login" className="text-xs text-gray-300 dark:text-gray-600 hover:text-gray-500 dark:hover:text-gray-400 transition-colors">Admin</Link>
         </div>
       </div>
     </footer>

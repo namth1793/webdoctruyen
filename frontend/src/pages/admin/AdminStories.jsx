@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -21,6 +21,8 @@ export default function AdminStories() {
   const [form, setForm] = useState(emptyForm);
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const fileRef = useRef(null);
   const navigate = useNavigate();
 
   const load = () => {
@@ -33,6 +35,22 @@ export default function AdminStories() {
 
   useEffect(() => { load(); }, [page, q]);
   useEffect(() => { API('/categories').then(r => setCategories(r.data)).catch(() => {}); }, []);
+
+  const handleCoverUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setUploading(true);
+    const fd = new FormData();
+    fd.append('file', file);
+    try {
+      const r = await API('/upload', { method: 'POST', data: fd, headers: { 'Content-Type': 'multipart/form-data' } });
+      setForm(f => ({ ...f, cover_image: r.data.url }));
+    } catch {
+      alert('Upload ảnh thất bại. Kiểm tra lại Cloudinary credentials trong .env');
+    }
+    setUploading(false);
+    e.target.value = '';
+  };
 
   const openAdd = () => { setEditing(null); setForm(emptyForm); setShowForm(true); };
   const openEdit = (s) => {
@@ -87,8 +105,19 @@ export default function AdminStories() {
             {stories.map(s => (
               <tr key={s.id} className="hover:bg-gray-50">
                 <td className="px-4 py-3">
-                  <div className="font-medium text-gray-900 line-clamp-1 max-w-[200px]">{s.title}</div>
-                  <div className="text-xs text-gray-500">{s.author}</div>
+                  <div className="flex items-center gap-3">
+                    {s.cover_image ? (
+                      <img src={s.cover_image} alt="" className="w-8 h-[43px] object-cover rounded shrink-0" />
+                    ) : (
+                      <div className="w-8 h-[43px] bg-gray-100 rounded shrink-0 flex items-center justify-center">
+                        <svg className="w-4 h-4 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                      </div>
+                    )}
+                    <div>
+                      <div className="font-medium text-gray-900 line-clamp-1 max-w-[180px]">{s.title}</div>
+                      <div className="text-xs text-gray-500">{s.author}</div>
+                    </div>
+                  </div>
                 </td>
                 <td className="px-4 py-3 hidden md:table-cell text-gray-600">{s.category_name || '—'}</td>
                 <td className="px-4 py-3 text-center hidden sm:table-cell text-gray-600">{s.total_chapters}</td>
@@ -126,14 +155,53 @@ export default function AdminStories() {
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6">
             <h2 className="text-lg font-bold text-gray-900 mb-5">{editing ? 'Sửa truyện' : 'Thêm truyện'}</h2>
+            <input ref={fileRef} type="file" accept="image/*" onChange={handleCoverUpload} className="hidden" />
             <div className="grid grid-cols-2 gap-4">
-              {[['title', 'Tên truyện', 'col-span-2'], ['slug', 'Slug (URL)', ''], ['author', 'Tác giả', ''], ['cover_image', 'Ảnh bìa (URL)', 'col-span-2']].map(([field, label, cls]) => (
+              {[['title', 'Tên truyện', 'col-span-2'], ['slug', 'Slug (URL)', ''], ['author', 'Tác giả', '']].map(([field, label, cls]) => (
                 <div key={field} className={cls}>
                   <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
                   <input value={form[field] || ''} onChange={e => setForm(f => ({ ...f, [field]: e.target.value }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
                 </div>
               ))}
+
+              {/* Ảnh bìa — upload file */}
+              <div className="col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Ảnh bìa</label>
+                {form.cover_image ? (
+                  <div className="flex items-start gap-4">
+                    <img src={form.cover_image} alt="Ảnh bìa" className="w-20 h-[107px] object-cover rounded-lg border border-gray-200 shadow-sm" />
+                    <div className="flex flex-col gap-2 pt-1">
+                      <button type="button" onClick={() => fileRef.current?.click()} disabled={uploading}
+                        className="px-4 py-1.5 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-lg disabled:opacity-60 transition-colors">
+                        {uploading ? 'Đang upload...' : 'Đổi ảnh'}
+                      </button>
+                      <button type="button" onClick={() => setForm(f => ({ ...f, cover_image: '' }))}
+                        className="px-4 py-1.5 text-sm border border-red-300 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                        Xoá ảnh
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <button type="button" onClick={() => fileRef.current?.click()} disabled={uploading}
+                    className="w-full flex flex-col items-center justify-center gap-2 py-6 border-2 border-dashed border-gray-300 hover:border-blue-400 rounded-xl text-sm text-gray-500 hover:text-blue-600 transition-colors disabled:opacity-60">
+                    {uploading ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                        <span>Đang upload...</span>
+                      </>
+                    ) : (
+                      <>
+                        <svg className="w-8 h-8 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        <span>Nhấn để chọn ảnh bìa</span>
+                        <span className="text-xs opacity-60">PNG, JPG — tối đa 5 MB</span>
+                      </>
+                    )}
+                  </button>
+                )}
+              </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Danh mục</label>
                 <select value={form.category_id || ''} onChange={e => setForm(f => ({ ...f, category_id: e.target.value }))}
@@ -172,9 +240,9 @@ export default function AdminStories() {
               </div>
             </div>
             <div className="flex gap-3 mt-6">
-              <button onClick={handleSave} disabled={saving}
+              <button onClick={handleSave} disabled={saving || uploading}
                 className="flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm transition-colors disabled:opacity-60">
-                {saving ? 'Đang lưu...' : 'Lưu'}
+                {saving ? 'Đang lưu...' : uploading ? 'Chờ upload xong...' : 'Lưu'}
               </button>
               <button onClick={() => setShowForm(false)} className="px-6 py-2.5 border border-gray-300 rounded-lg text-sm hover:bg-gray-50">Huỷ</button>
             </div>
