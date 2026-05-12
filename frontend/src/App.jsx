@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { AdminAuthProvider } from './context/AdminAuthContext';
+import { SettingsProvider } from './context/SettingsContext';
 import Layout from './components/Layout';
 import Home from './pages/Home';
 import CategoryPage from './pages/CategoryPage';
@@ -20,45 +21,49 @@ import AdminComments from './pages/admin/AdminComments';
 import AdminCategories from './pages/admin/AdminCategories';
 import AdminTags from './pages/admin/AdminTags';
 import AdminAffiliate from './pages/admin/AdminAffiliate';
+import AdminSettings from './pages/admin/AdminSettings';
 
 export default function App() {
   return (
-    <AuthProvider>
-      <AdminAuthProvider>
-        <BrowserRouter>
-          <Routes>
-            {/* Reading page (no main layout) */}
-            <Route path="/doc/:storySlug/:chapterSlug" element={<ChapterRead />} />
+    <SettingsProvider>
+      <AuthProvider>
+        <AdminAuthProvider>
+          <BrowserRouter>
+            <Routes>
+              {/* Reading page (no main layout) */}
+              <Route path="/doc/:storySlug/:chapterSlug" element={<ChapterRead />} />
 
-            {/* Admin routes */}
-            <Route path="/admin/login" element={<AdminLogin />} />
-            <Route path="/admin" element={<AdminLayout />}>
-              <Route index element={<AdminDashboard />} />
-              <Route path="truyen" element={<AdminStories />} />
-              <Route path="truyen/:storyId/chuong" element={<AdminChapters />} />
-              <Route path="binh-luan" element={<AdminComments />} />
-              <Route path="danh-muc" element={<AdminCategories />} />
-              <Route path="tags" element={<AdminTags />} />
-              <Route path="affiliate" element={<AdminAffiliate />} />
-            </Route>
+              {/* Admin routes */}
+              <Route path="/admin/login" element={<AdminLogin />} />
+              <Route path="/admin" element={<AdminLayout />}>
+                <Route index element={<AdminDashboard />} />
+                <Route path="truyen" element={<AdminStories />} />
+                <Route path="truyen/:storyId/chuong" element={<AdminChapters />} />
+                <Route path="binh-luan" element={<AdminComments />} />
+                <Route path="danh-muc" element={<AdminCategories />} />
+                <Route path="tags" element={<AdminTags />} />
+                <Route path="affiliate" element={<AdminAffiliate />} />
+                <Route path="settings" element={<AdminSettings />} />
+              </Route>
 
-            {/* Public routes with main layout */}
-            <Route element={<Layout />}>
-              <Route path="/" element={<Home />} />
-              <Route path="/ngon-tinh" element={<CategoryPage category="ngon-tinh" />} />
-              <Route path="/dam-my" element={<CategoryPage category="dam-my" />} />
-              <Route path="/tieu-thuyet" element={<CategoryPage category="tieu-thuyet" />} />
-              <Route path="/the-loai/:genre" element={<CategoryPage />} />
-              <Route path="/truyen/:slug" element={<StoryDetail />} />
-              <Route path="/tim-kiem" element={<SearchPage />} />
-              <Route path="/dang-nhap" element={<LoginPage />} />
-              <Route path="/dang-ky" element={<RegisterPage />} />
-              <Route path="/tu-truyen" element={<BookmarksPage />} />
-              <Route path="/lien-he" element={<ContactPage />} />
-            </Route>
-          </Routes>
-        </BrowserRouter>
-      </AdminAuthProvider>
-    </AuthProvider>
+              {/* Public routes with main layout */}
+              <Route element={<Layout />}>
+                <Route path="/" element={<Home />} />
+                <Route path="/ngon-tinh" element={<CategoryPage category="ngon-tinh" />} />
+                <Route path="/dam-my" element={<CategoryPage category="dam-my" />} />
+                <Route path="/tieu-thuyet" element={<CategoryPage category="tieu-thuyet" />} />
+                <Route path="/the-loai/:genre" element={<CategoryPage />} />
+                <Route path="/truyen/:slug" element={<StoryDetail />} />
+                <Route path="/tim-kiem" element={<SearchPage />} />
+                <Route path="/dang-nhap" element={<LoginPage />} />
+                <Route path="/dang-ky" element={<RegisterPage />} />
+                <Route path="/tu-truyen" element={<BookmarksPage />} />
+                <Route path="/lien-he" element={<ContactPage />} />
+              </Route>
+            </Routes>
+          </BrowserRouter>
+        </AdminAuthProvider>
+      </AuthProvider>
+    </SettingsProvider>
   );
 }

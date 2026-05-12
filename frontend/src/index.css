@@ -22,7 +22,7 @@
     @apply inline-flex items-center px-2 py-0.5 rounded text-xs font-medium;
   }
   .reading-content {
-    @apply text-gray-800 dark:text-gray-200 leading-[1.95];
+    @apply leading-[1.95];
     font-family: 'Be Vietnam Pro', Georgia, serif;
   }
 }

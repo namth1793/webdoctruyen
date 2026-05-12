@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { StoryCardGrid } from '../components/StoryCard';
 import { useAuth } from '../context/AuthContext';
+import { useSettings } from '../context/SettingsContext';
 
 function timeAgo(dateStr) {
   if (!dateStr) return '';
@@ -36,6 +37,7 @@ const GENRES = [
 
 export default function Home() {
   const { user } = useAuth();
+  const { hero_bg_url } = useSettings();
   const [featured,       setFeatured]       = useState([]);
   const [latest,         setLatest]         = useState([]);
   const [hot,            setHot]            = useState([]);
@@ -87,7 +89,7 @@ export default function Home() {
   const others = featured.filter((_, i) => i !== featuredIdx).slice(0, 3);
 
   const beachBg = {
-    backgroundImage: `url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80')`,
+    backgroundImage: `url('${hero_bg_url || 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80'}')`,
     backgroundSize: 'cover',
     backgroundPosition: 'center bottom',
   };
@@ -173,6 +175,7 @@ export default function Home() {
       )}
 
       {/* ── SECTIONS ── */}
+      <div className="bg-white/10 dark:bg-gray-950">
       <div className="max-w-7xl mx-auto px-4 py-10 space-y-14">
 
         {/* 1. TRUYỆN MỚI CẬP NHẬT */}
@@ -217,15 +220,15 @@ export default function Home() {
             <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-3">
               {newStories.slice(0, 6).map(s => (
                 <Link key={s.id} to={`/truyen/${s.slug}`}
-                  className="group bg-white rounded-2xl p-3 flex gap-3 shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5">
+                  className="group bg-white dark:bg-gray-800 rounded-2xl p-3 flex gap-3 shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5">
                   <img src={s.cover_image} alt={s.title}
                     className="w-16 h-[86px] object-cover rounded-xl shrink-0"
                     onError={e => { e.target.src = `https://picsum.photos/seed/${s.slug}/300/400`; }} />
                   <div className="flex-1 min-w-0 flex flex-col">
-                    <h3 className="font-black text-sm text-gray-900 uppercase line-clamp-2 leading-snug mb-1 group-hover:text-blue-600 transition-colors">
+                    <h3 className="font-black text-sm text-gray-900 dark:text-white uppercase line-clamp-2 leading-snug mb-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                       {s.title}
                     </h3>
-                    <p className="text-xs text-gray-500 line-clamp-3 flex-1 leading-relaxed">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-3 flex-1 leading-relaxed">
                       {s.description}
                     </p>
                     <div className="flex items-center gap-2 mt-2">
@@ -239,7 +242,7 @@ export default function Home() {
               ))}
             </div>
 
-            <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm overflow-hidden">
               {readingHistory.length === 0 ? (
                 <div className="h-full flex flex-col items-center justify-center text-center p-8 min-h-[200px]">
                   <div className="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center mb-3">
@@ -254,12 +257,12 @@ export default function Home() {
                 <div className="divide-y divide-gray-50">
                   {readingHistory.slice(0, 6).map(h => (
                     <Link key={h.id} to={`/doc/${h.slug}/chuong-${h.chapter_number}`}
-                      className="flex items-center gap-3 p-3 hover:bg-gray-50 transition-colors group">
+                      className="flex items-center gap-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors group">
                       <img src={h.cover_image} alt={h.title}
                         className="w-10 h-[52px] object-cover rounded-lg shrink-0"
                         onError={e => { e.target.src = `https://picsum.photos/seed/${h.slug}/300/400`; }} />
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs font-semibold text-gray-900 group-hover:text-blue-600 line-clamp-2 leading-snug">{h.title}</p>
+                        <p className="text-xs font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 line-clamp-2 leading-snug">{h.title}</p>
                         <p className="text-[11px] text-blue-500 font-medium mt-0.5">Chương {h.chapter_number}</p>
                         <p className="text-[11px] text-gray-400">{timeAgo(h.updated_at)}</p>
                       </div>
@@ -287,13 +290,13 @@ export default function Home() {
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
             {GENRES.map(g => (
               <Link key={g.label} to={g.to}
-                className="group bg-white rounded-2xl px-3 py-3.5 flex items-center gap-3 shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5">
+                className="group bg-white dark:bg-gray-800 rounded-2xl px-3 py-3.5 flex items-center gap-3 shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5">
                 <div className={`w-10 h-10 bg-gradient-to-br ${g.iconBg} rounded-xl flex items-center justify-center shrink-0 shadow`}>
                   <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={g.icon} />
                   </svg>
                 </div>
-                <span className="text-sm font-semibold text-gray-800 group-hover:text-violet-600 transition-colors leading-tight truncate">{g.label}</span>
+                <span className="text-sm font-semibold text-gray-800 dark:text-gray-100 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors leading-tight truncate">{g.label}</span>
               </Link>
             ))}
           </div>
@@ -313,6 +316,7 @@ export default function Home() {
           </div>
         </section>
 
+      </div>
       </div>
     </div>
   );

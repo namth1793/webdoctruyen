@@ -218,4 +218,27 @@ router.delete('/affiliate/:id', adminAuth, (req, res) => {
   res.json({ ok: true });
 });
 
+// ── Site Settings ──────────────────────────────────────────
+router.get('/settings', adminAuth, (req, res) => {
+  const rows = db.prepare('SELECT key, value FROM site_settings').all();
+  const settings = {};
+  rows.forEach(r => { settings[r.key] = r.value; });
+  res.json(settings);
+});
+
+router.put('/settings', adminAuth, (req, res) => {
+  const upsert = db.prepare(`
+    INSERT INTO site_settings (key, value, updated_at)
+    VALUES (?, ?, datetime('now','localtime'))
+    ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at
+  `);
+  const save = db.transaction((data) => {
+    Object.entries(data).forEach(([key, value]) => upsert.run(key, String(value ?? '')));
+  });
+  save(req.body);
+  res.json({ ok: true });
+});
+
+module.exports = router;
+
 module.exports = router;

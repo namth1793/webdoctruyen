@@ -139,10 +139,32 @@ db.exec(`
     read INTEGER DEFAULT 0,
     created_at TEXT DEFAULT (datetime('now','localtime'))
   );
+
+  CREATE TABLE IF NOT EXISTS site_settings (
+    key TEXT PRIMARY KEY,
+    value TEXT NOT NULL DEFAULT '',
+    updated_at TEXT DEFAULT (datetime('now','localtime'))
+  );
 `);
 
 // Migrations
 try { db.exec('ALTER TABLE affiliate_links ADD COLUMN time_trigger INTEGER DEFAULT 5'); } catch (_) {}
 try { db.exec("ALTER TABLE affiliate_links ADD COLUMN image_url TEXT DEFAULT ''"); } catch (_) {}
+
+// Seed default site settings
+const upsertSetting = db.prepare(`
+  INSERT INTO site_settings (key, value) VALUES (?, ?)
+  ON CONFLICT(key) DO NOTHING
+`);
+const defaults = {
+  site_name: 'Truyện Huba',
+  logo_url: '',
+  site_description: 'Nền tảng đọc truyện online với kho nội dung phong phú, trải nghiệm mượt mà – đọc là cuốn, xem là mê.',
+  hero_bg_url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80',
+  footer_copyright: '© 2025 Truyện Huba. All rights reserved.',
+  social_facebook: '#',
+  social_youtube: '#',
+};
+Object.entries(defaults).forEach(([k, v]) => upsertSetting.run(k, v));
 
 module.exports = db;

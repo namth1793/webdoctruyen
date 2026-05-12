@@ -42,6 +42,14 @@ app.use('/api/affiliate', require('./routes/affiliate'));
 app.use('/api/contact', require('./routes/contact'));
 app.use('/api/admin', require('./routes/admin'));
 
+// Public settings API
+app.get('/api/settings', (req, res) => {
+  const rows = db.prepare('SELECT key, value FROM site_settings').all();
+  const settings = {};
+  rows.forEach(r => { settings[r.key] = r.value; });
+  res.json(settings);
+});
+
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 
 app.listen(PORT, () => {

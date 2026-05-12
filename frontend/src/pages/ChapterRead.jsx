@@ -6,7 +6,7 @@ const FONT_SIZES = [14, 16, 18, 20, 22, 24];
 const THEMES = [
   { id: 'light', label: 'Sáng', bg: 'bg-white', text: 'text-gray-800', border: 'border-gray-200' },
   { id: 'sepia', label: 'Sepia', bg: 'bg-amber-50', text: 'text-amber-900', border: 'border-amber-200' },
-  { id: 'dark', label: 'Tối', bg: 'bg-gray-900', text: 'text-gray-100', border: 'border-gray-700' },
+  { id: 'dark', label: 'Tối', bg: 'bg-gray-900', text: 'text-white', border: 'border-gray-700' },
 ];
 
 export default function ChapterRead() {

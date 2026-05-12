@@ -2,6 +2,7 @@ import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useSettings } from '../context/SettingsContext';
 
 const THE_LOAI = [
   { label: 'Ngôn tình', to: '/ngon-tinh' },
@@ -21,6 +22,7 @@ const THE_LOAI = [
 
 export default function Navbar() {
   const { user, logout } = useAuth();
+  const { site_name, logo_url } = useSettings();
   const navigate = useNavigate();
   const location = useLocation();
   const [query, setQuery] = useState('');
@@ -100,11 +102,14 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto px-3 sm:px-4 h-14 sm:h-20 flex items-center gap-2 sm:gap-4">
           {/* Logo — compact on mobile */}
           <Link to="/" className="flex items-center gap-2 shrink-0">
-            <img src="/assets/logo.png" alt="Truyện Huba" className="w-10 h-10 sm:w-20 sm:h-20 object-contain shrink-0" />
+            <img src={logo_url || '/assets/logo.png'} alt={site_name}
+              className="w-10 h-10 sm:w-20 sm:h-20 object-contain shrink-0" />
             <div className="leading-tight hidden sm:block">
-              <div className="font-black text-blue-700 dark:text-blue-400 text-base leading-none">Truyện Huba</div>
+              <div className="font-black text-blue-700 dark:text-blue-400 text-base leading-none">{site_name}</div>
             </div>
-            <span className="sm:hidden font-black text-blue-700 dark:text-blue-400 text-sm leading-none">Huba</span>
+            <span className="sm:hidden font-black text-blue-700 dark:text-blue-400 text-sm leading-none">
+              {site_name?.split(' ')[0] || site_name}
+            </span>
           </Link>
 
           {/* Search */}
