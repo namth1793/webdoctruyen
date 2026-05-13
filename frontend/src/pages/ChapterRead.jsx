@@ -126,15 +126,10 @@ export default function ChapterRead() {
 
       {/* ===== Affiliate Gate Overlay ===== */}
       {showGate && gateLink && (
-        <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm">
-          <div className="w-full sm:max-w-sm bg-white dark:bg-gray-900 rounded-t-3xl sm:rounded-2xl shadow-2xl overflow-hidden">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+          <div className="w-full max-w-sm bg-white dark:bg-gray-900 rounded-2xl shadow-2xl overflow-hidden">
 
-            {/* Drag handle (mobile) */}
-            <div className="flex justify-center pt-3 pb-1 sm:hidden">
-              <div className="w-10 h-1 bg-gray-300 dark:bg-gray-600 rounded-full" />
-            </div>
-
-            <div className="px-5 pb-6 pt-2 sm:pt-5">
+            <div className="px-5 pb-6 pt-5">
               {/* Instruction text */}
               <p className="text-sm text-gray-700 dark:text-gray-200 text-center leading-relaxed mb-4">
                 Để đọc tiếp, bạn vui lòng nhấp vào link bên dưới để ủng hộ{' '}

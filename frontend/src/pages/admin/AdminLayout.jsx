@@ -1,6 +1,6 @@
-import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAdminAuth } from '../../context/AdminAuthContext';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 const navItems = [
   { to: '/admin', label: 'Dashboard', end: true, icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
@@ -15,8 +15,9 @@ const navItems = [
 export default function AdminLayout() {
   const { admin, logout } = useAdminAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // Use localStorage as ground truth — avoids redirect flicker right after login
   const token = localStorage.getItem('admin_token');
   const isAuth = !!(admin || token);
 
@@ -24,49 +25,94 @@ export default function AdminLayout() {
     if (!isAuth) navigate('/admin/login', { replace: true });
   }, [isAuth]);
 
+  // Close sidebar on route change (mobile)
+  useEffect(() => { setSidebarOpen(false); }, [location.pathname]);
+
   if (!isAuth) return null;
 
   const displayAdmin = admin || (() => {
     try { return JSON.parse(localStorage.getItem('admin_user')); } catch { return { username: 'Admin' }; }
   })();
 
+  const currentPage = navItems.find(i => i.end ? location.pathname === i.to : location.pathname.startsWith(i.to));
+
+  const SidebarContent = () => (
+    <>
+      <div className="px-5 py-5 border-b border-gray-700">
+        <div className="text-white font-bold text-sm">Truyện Huba</div>
+        <div className="text-gray-400 text-xs mt-0.5">Admin Panel</div>
+      </div>
+      <nav className="flex-1 py-4 space-y-0.5 px-2 overflow-y-auto">
+        {navItems.map(item => (
+          <NavLink key={item.to} to={item.to} end={item.end}
+            className={({ isActive }) =>
+              `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${isActive ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-800 hover:text-white'}`
+            }>
+            <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={item.icon} />
+            </svg>
+            {item.label}
+          </NavLink>
+        ))}
+      </nav>
+      <div className="p-4 border-t border-gray-700">
+        <div className="text-xs text-gray-400 mb-2 truncate">{displayAdmin?.email || displayAdmin?.username}</div>
+        <button onClick={() => { logout(); navigate('/admin/login'); }}
+          className="w-full flex items-center gap-2 px-3 py-2 text-xs text-red-400 hover:bg-gray-800 rounded-lg transition-colors">
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+          </svg>
+          Đăng xuất
+        </button>
+      </div>
+    </>
+  );
+
   return (
     <div className="min-h-screen bg-gray-50 flex">
-      {/* Sidebar */}
-      <aside className="w-56 bg-gray-900 flex flex-col shrink-0">
-        <div className="px-5 py-5 border-b border-gray-700">
-          <div className="text-white font-bold text-sm">Truyện Huba</div>
-          <div className="text-gray-400 text-xs mt-0.5">Admin Panel</div>
-        </div>
-        <nav className="flex-1 py-4 space-y-0.5 px-2">
-          {navItems.map(item => (
-            <NavLink key={item.to} to={item.to} end={item.end}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${isActive ? 'bg-blue-600 text-white' : 'text-gray-400 hover:bg-gray-800 hover:text-white'}`
-              }>
-              <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={item.icon} />
-              </svg>
-              {item.label}
-            </NavLink>
-          ))}
-        </nav>
-        <div className="p-4 border-t border-gray-700">
-          <div className="text-xs text-gray-400 mb-2 truncate">{displayAdmin?.email || displayAdmin?.username}</div>
-          <button onClick={() => { logout(); navigate('/admin/login'); }}
-            className="w-full flex items-center gap-2 px-3 py-2 text-xs text-red-400 hover:bg-gray-800 rounded-lg transition-colors">
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-            </svg>
-            Đăng xuất
-          </button>
-        </div>
+
+      {/* Sidebar — desktop */}
+      <aside className="hidden md:flex w-56 bg-gray-900 flex-col shrink-0">
+        <SidebarContent />
       </aside>
 
+      {/* Sidebar drawer — mobile overlay */}
+      {sidebarOpen && (
+        <div className="md:hidden fixed inset-0 z-50 flex">
+          <div className="w-64 bg-gray-900 flex flex-col h-full shadow-2xl">
+            <SidebarContent />
+          </div>
+          {/* backdrop */}
+          <div className="flex-1 bg-black/50" onClick={() => setSidebarOpen(false)} />
+        </div>
+      )}
+
       {/* Main */}
-      <main className="flex-1 min-w-0 overflow-auto">
-        <Outlet />
-      </main>
+      <div className="flex-1 min-w-0 flex flex-col">
+
+        {/* Mobile top bar */}
+        <header className="md:hidden flex items-center gap-3 px-4 h-14 bg-gray-900 shadow-md shrink-0">
+          <button onClick={() => setSidebarOpen(true)}
+            className="w-9 h-9 flex items-center justify-center text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-colors">
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+          <span className="flex-1 text-white font-semibold text-sm truncate">
+            {currentPage?.label || 'Admin'}
+          </span>
+          <button onClick={() => { logout(); navigate('/admin/login'); }}
+            className="w-9 h-9 flex items-center justify-center text-red-400 hover:bg-gray-800 rounded-lg transition-colors">
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+          </button>
+        </header>
+
+        <main className="flex-1 min-w-0 overflow-auto">
+          <Outlet />
+        </main>
+      </div>
     </div>
   );
 }

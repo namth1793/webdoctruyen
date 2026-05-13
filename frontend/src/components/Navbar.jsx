@@ -357,6 +357,11 @@ export default function Navbar() {
               <Link to="/dang-ky" className="flex-1 text-center py-2.5 bg-white hover:bg-blue-50 text-blue-700 text-sm font-semibold rounded-xl transition-colors">Đăng ký</Link>
             </div>
           )}
+          <div className="px-5 py-3 border-t border-blue-500/30">
+            <Link to="/admin/login" className="text-xs text-blue-300/60 hover:text-blue-200 transition-colors">
+              Admin
+            </Link>
+          </div>
         </div>
       )}
     </header>
