@@ -164,6 +164,7 @@ const defaults = {
   footer_copyright: '© 2025 Truyện Huba. All rights reserved.',
   social_facebook: '#',
   social_youtube: '#',
+  affiliate_step: '2',
 };
 Object.entries(defaults).forEach(([k, v]) => upsertSetting.run(k, v));
 

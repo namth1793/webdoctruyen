@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useSettings } from '../context/SettingsContext';
 
 const FONT_SIZES = [14, 16, 18, 20, 22, 24];
 const THEMES = [
@@ -13,6 +14,10 @@ export default function ChapterRead() {
   const { storySlug, chapterSlug } = useParams();
   const navigate = useNavigate();
   const chNum = parseInt(chapterSlug?.replace('chuong-', '') || '');
+  const { affiliate_step, refreshSettings } = useSettings();
+  const step = Math.max(1, parseInt(affiliate_step) || 2);
+
+  useEffect(() => { refreshSettings(); }, []);
 
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -32,8 +37,8 @@ export default function ChapterRead() {
 
   const theme = THEMES.find(t => t.id === themeId) || THEMES[0];
 
-  // Gate: mọi chương chẵn (2, 4, 6, 8, ...)
-  const isGateChapter = !isNaN(chNum) && chNum % 2 === 0;
+  // Gate: chương 2, 2+step, 2+2*step, ... (step từ site settings)
+  const isGateChapter = !isNaN(chNum) && chNum >= 2 && (chNum - 2) % step === 0;
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -142,15 +147,6 @@ export default function ChapterRead() {
                 className="block text-center text-sm font-bold text-blue-600 dark:text-blue-400 hover:underline break-all mb-4">
                 {gateLink.url}
               </a>
-
-              {/* Banner image — clickable */}
-              {gateLink.image_url && (
-                <a href={gateLink.url} target="_blank" rel="noopener noreferrer"
-                  onClick={handleAffiliateClick}
-                  className="block mb-4 rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700 shadow-sm active:opacity-80">
-                  <img src={gateLink.image_url} alt="banner" className="w-full object-cover" />
-                </a>
-              )}
 
               {/* Mô tả sản phẩm */}
               {gateLink.description && (
