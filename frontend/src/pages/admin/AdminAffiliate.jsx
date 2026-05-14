@@ -12,6 +12,7 @@ const empty = { name: '', url: '', description: '' };
 export default function AdminAffiliate() {
   const [links, setLinks] = useState([]);
   const [form, setForm] = useState(empty);
+  const [editing, setEditing] = useState(null);
   const [saving, setSaving] = useState(false);
   const [step, setStep] = useState('2');
   const [stepSaving, setStepSaving] = useState(false);
@@ -35,16 +36,25 @@ export default function AdminAffiliate() {
     setStepSaving(false);
   };
 
-  const handleAdd = async () => {
+  const handleSave = async () => {
     if (!form.name.trim() || !form.url.trim()) return alert('Vui lòng nhập tên và URL');
     setSaving(true);
     try {
-      await API('/affiliate', { method: 'POST', data: form });
+      if (editing) await API(`/affiliate/${editing}`, { method: 'PUT', data: form });
+      else await API('/affiliate', { method: 'POST', data: form });
       setForm(empty);
+      setEditing(null);
       load();
     } catch (e) { alert(e.response?.data?.error || 'Lỗi'); }
     setSaving(false);
   };
+
+  const startEdit = (l) => {
+    setEditing(l.id);
+    setForm({ name: l.name, url: l.url, description: l.description || '' });
+  };
+
+  const cancelEdit = () => { setEditing(null); setForm(empty); };
 
   const toggleActive = async (link) => {
     await API(`/affiliate/${link.id}`, { method: 'PUT', data: { ...link, active: link.active ? 0 : 1 } });
@@ -81,9 +91,9 @@ export default function AdminAffiliate() {
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6">
-        {/* ── Form thêm link ── */}
+        {/* ── Form thêm / sửa link ── */}
         <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm self-start">
-          <h2 className="font-semibold text-gray-900 mb-4">Thêm link mới</h2>
+          <h2 className="font-semibold text-gray-900 mb-4">{editing ? 'Sửa link' : 'Thêm link mới'}</h2>
           <div className="space-y-3">
             <div>
               <label className="block text-xs font-medium text-gray-600 mb-1">Tên hiển thị</label>
@@ -104,10 +114,18 @@ export default function AdminAffiliate() {
                 placeholder="Ghé Shopee ủng hộ web nhé!" />
             </div>
           </div>
-          <button onClick={handleAdd} disabled={saving}
-            className="w-full mt-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm disabled:opacity-60 transition-colors">
-            {saving ? 'Đang lưu...' : '+ Thêm link'}
-          </button>
+          <div className="flex gap-2 mt-4">
+            <button onClick={handleSave} disabled={saving}
+              className="flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm disabled:opacity-60 transition-colors">
+              {saving ? 'Đang lưu...' : editing ? 'Cập nhật' : '+ Thêm link'}
+            </button>
+            {editing && (
+              <button onClick={cancelEdit}
+                className="px-4 py-2.5 border border-gray-300 rounded-lg text-sm hover:bg-gray-50 transition-colors">
+                Huỷ
+              </button>
+            )}
+          </div>
         </div>
 
         {/* ── Danh sách link ── */}
@@ -136,6 +154,10 @@ export default function AdminAffiliate() {
 
                   {/* Actions */}
                   <div className="flex gap-1.5 shrink-0">
+                    <button onClick={() => startEdit(l)}
+                      className="px-3 py-1.5 text-xs font-medium rounded-lg bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors">
+                      Sửa
+                    </button>
                     <button onClick={() => toggleActive(l)}
                       className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
                         l.active

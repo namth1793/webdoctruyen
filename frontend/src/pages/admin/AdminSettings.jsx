@@ -24,6 +24,8 @@ export default function AdminSettings() {
     footer_copyright: '',
     social_facebook: '',
     social_youtube: '',
+    social_telegram: '',
+    social_email: '',
   });
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -182,6 +184,18 @@ export default function AdminSettings() {
                 <label className="block text-xs font-medium text-gray-600 mb-1">YouTube URL</label>
                 <input value={form.social_youtube || ''} onChange={e => set('social_youtube', e.target.value)}
                   placeholder="https://youtube.com/..."
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-600 mb-1">Telegram (username hoặc link nhóm)</label>
+                <input value={form.social_telegram || ''} onChange={e => set('social_telegram', e.target.value)}
+                  placeholder="https://t.me/..."
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-600 mb-1">Email liên hệ</label>
+                <input value={form.social_email || ''} onChange={e => set('social_email', e.target.value)}
+                  placeholder="contact@truyenhuba.com"
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
               </div>
             </div>

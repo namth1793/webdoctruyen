@@ -9,8 +9,10 @@ const DEFAULTS = {
   site_description: 'Nền tảng đọc truyện online với kho nội dung phong phú, trải nghiệm mượt mà – đọc là cuốn, xem là mê.',
   hero_bg_url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80',
   footer_copyright: '© 2025 Truyện Huba. All rights reserved.',
-  social_facebook: '#',
-  social_youtube: '#',
+  social_facebook: '',
+  social_youtube: '',
+  social_telegram: '',
+  social_email: '',
   affiliate_step: '2',
 };
 
