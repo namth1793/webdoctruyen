@@ -22,6 +22,19 @@ router.post('/upload', adminAuth, upload.single('file'), (req, res) => {
   stream.end(req.file.buffer);
 });
 
+// Đổi mật khẩu admin
+router.put('/change-password', adminAuth, (req, res) => {
+  const { current_password, new_password } = req.body;
+  if (!current_password || !new_password) return res.status(400).json({ error: 'Thiếu thông tin' });
+  if (new_password.length < 6) return res.status(400).json({ error: 'Mật khẩu mới phải có ít nhất 6 ký tự' });
+  const admin = db.prepare('SELECT * FROM admin_users WHERE id = ?').get(req.admin.id);
+  if (!admin || !bcrypt.compareSync(current_password, admin.password))
+    return res.status(401).json({ error: 'Mật khẩu hiện tại không đúng' });
+  const hashed = bcrypt.hashSync(new_password, 10);
+  db.prepare('UPDATE admin_users SET password = ? WHERE id = ?').run(hashed, req.admin.id);
+  res.json({ ok: true });
+});
+
 // Login
 router.post('/login', (req, res) => {
   const { email, password } = req.body;

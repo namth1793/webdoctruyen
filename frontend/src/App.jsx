@@ -22,6 +22,7 @@ import AdminCategories from './pages/admin/AdminCategories';
 import AdminTags from './pages/admin/AdminTags';
 import AdminAffiliate from './pages/admin/AdminAffiliate';
 import AdminSettings from './pages/admin/AdminSettings';
+import AdminChangePassword from './pages/admin/AdminChangePassword';
 
 export default function App() {
   return (
@@ -44,6 +45,7 @@ export default function App() {
                 <Route path="tags" element={<AdminTags />} />
                 <Route path="affiliate" element={<AdminAffiliate />} />
                 <Route path="settings" element={<AdminSettings />} />
+                <Route path="doi-mat-khau" element={<AdminChangePassword />} />
               </Route>
 
               {/* Public routes with main layout */}
