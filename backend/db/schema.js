@@ -150,6 +150,7 @@ db.exec(`
 // Migrations
 try { db.exec('ALTER TABLE affiliate_links ADD COLUMN time_trigger INTEGER DEFAULT 5'); } catch (_) {}
 try { db.exec("ALTER TABLE affiliate_links ADD COLUMN image_url TEXT DEFAULT ''"); } catch (_) {}
+try { db.exec('ALTER TABLE stories ADD COLUMN hidden INTEGER DEFAULT 0'); } catch (_) {}
 
 // Seed default site settings
 const upsertSetting = db.prepare(`

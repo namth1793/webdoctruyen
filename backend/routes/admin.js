@@ -75,6 +75,13 @@ router.put('/stories/:id', adminAuth, (req, res) => {
   } catch (e) { res.status(400).json({ error: e.message }); }
 });
 
+router.patch('/stories/:id/hidden', adminAuth, (req, res) => {
+  const story = db.prepare('SELECT hidden FROM stories WHERE id=?').get(req.params.id);
+  if (!story) return res.status(404).json({ error: 'Not found' });
+  db.prepare('UPDATE stories SET hidden=? WHERE id=?').run(story.hidden ? 0 : 1, req.params.id);
+  res.json({ hidden: !story.hidden });
+});
+
 router.delete('/stories/:id', adminAuth, (req, res) => {
   const id = req.params.id;
   db.prepare('DELETE FROM chapters WHERE story_id=?').run(id);

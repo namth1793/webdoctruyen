@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAdminAuth } from '../../context/AdminAuthContext';
 
 export default function AdminLogin() {
@@ -61,9 +61,6 @@ export default function AdminLogin() {
             {loading ? 'Đang đăng nhập...' : 'Đăng nhập'}
           </button>
         </form>
-
-        <p className="text-xs text-gray-400 text-center mt-4">admin@truyen.vn / admin123</p>
-
         <Link to="/" className="flex items-center justify-center gap-1.5 mt-4 text-sm text-gray-400 hover:text-blue-600 transition-colors">
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />

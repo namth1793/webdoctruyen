@@ -77,6 +77,11 @@ export default function AdminStories() {
     load();
   };
 
+  const toggleHidden = async (id) => {
+    await API(`/stories/${id}/hidden`, { method: 'PATCH' });
+    load();
+  };
+
   return (
     <div className="p-6">
       <div className="flex items-center justify-between mb-5">
@@ -103,7 +108,7 @@ export default function AdminStories() {
           </thead>
           <tbody className="divide-y divide-gray-100">
             {stories.map(s => (
-              <tr key={s.id} className="hover:bg-gray-50">
+              <tr key={s.id} className={`hover:bg-gray-50 ${s.hidden ? 'opacity-50' : ''}`}>
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-3">
                     {s.cover_image ? (
@@ -114,7 +119,10 @@ export default function AdminStories() {
                       </div>
                     )}
                     <div>
-                      <div className="font-medium text-gray-900 line-clamp-1 max-w-[180px]">{s.title}</div>
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-medium text-gray-900 line-clamp-1 max-w-[160px]">{s.title}</span>
+                        {s.hidden ? <span className="text-xs bg-gray-200 text-gray-500 px-1.5 py-0.5 rounded shrink-0">Ẩn</span> : null}
+                      </div>
                       <div className="text-xs text-gray-500">{s.author}</div>
                     </div>
                   </div>
@@ -131,6 +139,10 @@ export default function AdminStories() {
                   <div className="flex items-center justify-end gap-1">
                     <Link to={`/admin/truyen/${s.id}/chuong`} className="px-2 py-1 text-xs bg-green-100 text-green-700 hover:bg-green-200 rounded transition-colors">Chương</Link>
                     <button onClick={() => openEdit(s)} className="px-2 py-1 text-xs bg-blue-100 text-blue-700 hover:bg-blue-200 rounded transition-colors">Sửa</button>
+                    <button onClick={() => toggleHidden(s.id)}
+                      className={`px-2 py-1 text-xs rounded transition-colors ${s.hidden ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
+                      {s.hidden ? 'Hiện' : 'Ẩn'}
+                    </button>
                     <button onClick={() => handleDelete(s.id, s.title)} className="px-2 py-1 text-xs bg-red-100 text-red-700 hover:bg-red-200 rounded transition-colors">Xoá</button>
                   </div>
                 </td>

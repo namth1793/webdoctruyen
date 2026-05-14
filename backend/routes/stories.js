@@ -12,6 +12,7 @@ router.get('/', (req, res) => {
   let where = [];
   let params = [];
 
+  where.push('(s.hidden = 0 OR s.hidden IS NULL)');
   if (category) { where.push('c.slug = ?'); params.push(category); }
   if (status)   { where.push('s.status = ?'); params.push(status); }
   if (genre)    { where.push('s.genres LIKE ?'); params.push(`%${genre}%`); }
@@ -59,7 +60,7 @@ router.get('/featured', (req, res) => {
     SELECT s.*, c.name as category_name, c.slug as category_slug, c.color as category_color
     FROM stories s
     LEFT JOIN categories c ON s.category_id = c.id
-    WHERE s.featured = 1
+    WHERE s.featured = 1 AND (s.hidden = 0 OR s.hidden IS NULL)
     ORDER BY s.views DESC
     LIMIT 5
   `).all();
@@ -74,6 +75,7 @@ router.get('/latest', (req, res) => {
     (SELECT updated_at FROM chapters WHERE story_id = s.id ORDER BY chapter_number DESC LIMIT 1) as chapter_updated
     FROM stories s
     LEFT JOIN categories c ON s.category_id = c.id
+    WHERE (s.hidden = 0 OR s.hidden IS NULL)
     ORDER BY s.updated_at DESC
     LIMIT 20
   `).all();
@@ -86,6 +88,7 @@ router.get('/hot', (req, res) => {
     SELECT s.*, c.name as category_name, c.slug as category_slug, c.color as category_color
     FROM stories s
     LEFT JOIN categories c ON s.category_id = c.id
+    WHERE (s.hidden = 0 OR s.hidden IS NULL)
     ORDER BY s.views DESC
     LIMIT 10
   `).all();
