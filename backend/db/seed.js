@@ -1,5 +1,7 @@
 const db = require('./schema');
 
+db.exec('BEGIN');
+
 // Clear existing data
 db.exec(`
   DELETE FROM ratings;
@@ -658,6 +660,8 @@ for (const r of sampleRatings) {
   const s = db.prepare('SELECT id FROM stories WHERE slug = ?').get(r.slug);
   if (s) insertRating.run(s.id, userId, r.score);
 }
+
+db.exec('COMMIT');
 
 console.log('✅ Seed thành công!');
 console.log(`  - ${stories.length} truyện`);

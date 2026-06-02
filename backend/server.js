@@ -23,8 +23,12 @@ if (storyCount === 0) {
 const app = express();
 const PORT = process.env.PORT || 5020;
 
+const corsOrigins = process.env.ALLOWED_ORIGIN
+  ? [...process.env.ALLOWED_ORIGIN.split(',').map(o => o.trim()), 'https://truyenhuba.com', 'https://www.truyenhuba.com']
+  : '*';
+
 app.use(cors({
-  origin: process.env.ALLOWED_ORIGIN ? process.env.ALLOWED_ORIGIN.split(',') : '*',
+  origin: corsOrigins,
   credentials: true,
 }));
 app.use(express.json());
