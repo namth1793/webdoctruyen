@@ -281,7 +281,11 @@ export default function ChapterRead() {
 
         <div className="reading-content" style={{ fontSize: `${fontSize}px` }}>
           {chapter.content?.split('\n\n').map((para, i) => (
-            <p key={i} className="mb-5">{para}</p>
+            <p key={i} className="mb-5">
+              {para.split('\n').map((line, j, arr) => (
+                <span key={j}>{line}{j < arr.length - 1 && <br />}</span>
+              ))}
+            </p>
           ))}
         </div>
 
