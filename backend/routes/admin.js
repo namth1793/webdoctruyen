@@ -41,7 +41,7 @@ router.post('/login', (req, res) => {
   const admin = db.prepare('SELECT * FROM admin_users WHERE email = ?').get(email);
   if (!admin || !bcrypt.compareSync(password, admin.password))
     return res.status(401).json({ error: 'Sai email hoặc mật khẩu' });
-  const token = jwt.sign({ id: admin.id, email: admin.email, username: admin.username, isAdmin: true }, SECRET, { expiresIn: '7d' });
+  const token = jwt.sign({ id: admin.id, email: admin.email, username: admin.username, isAdmin: true }, SECRET, { expiresIn: '30d' });
   res.json({ token, admin: { id: admin.id, username: admin.username, email: admin.email } });
 });
 
